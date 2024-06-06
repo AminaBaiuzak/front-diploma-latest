@@ -14,3 +14,10 @@ export type Order = {
   };
   subRows?: Order[];
 };
+
+export type ReviewData = {
+  distributor_id: number,
+  rating: number,
+  text: string,
+  product_id: number
+}

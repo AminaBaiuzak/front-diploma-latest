@@ -15,7 +15,8 @@ import { PiShoppingCart } from "react-icons/pi";
 import ReactModal from "react-modal";
 import { toast } from "react-toastify";
 import ReviewForm from "@/components/ReviewForm";
-import {getReviewsByProductId} from "@/services/product";
+import {getReviewsByProductId} from "@/services/reviews";
+import ReviewList from "@/components/ReviewList";
 
 export default function page() {
   const [selectedImage, setSelectedImage] = useState("");
@@ -40,16 +41,7 @@ export default function page() {
     },
   });
 
-  const { data: reviewsData, isLoading: reviewsLoading, isError: reviewsError } = useQuery({
-    queryKey: ["product_reviews", id],
-    queryFn: () => {
-      const token = localStorage.getItem("duken");
-      if (!token) {
-        throw new Error("No token found");
-      }
-      return getReviewsByProductId({ id, token: JSON.parse(token).token });
-    },
-  });
+  console.log("Data about product", data)
 
   useEffect(() => {
     if (isError) {
@@ -200,7 +192,7 @@ export default function page() {
               <RiMapPinLine size={15} color="black" />
             </div>
             <div className="rounded-[20px] bg-[#FFC350CC] w-ful py-1 flex justify-center my-[19px]">
-              <span className=" uppercase text-white">Category name</span>
+              <span className=" uppercase text-white">{data.product.category}</span>
             </div>
             <div className="pt-[21px] px-[15px] pb-[32px] mb-[38px] border rounded-[10px] border-black">
               <p className=" font-outfit text-[12px]">{data.product.product_description}</p>
@@ -259,55 +251,16 @@ export default function page() {
         </div>
         <div>
 
-          <ReviewForm />
+          <ReviewForm data={data}/>
 
           <p className=" font-medium text-[18px] font-outfit">Customer Reviews</p>
           <div className="flex flex-col gap-[8px] my-[8px]">
-            <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-              <p className="text-[#413B89] text-[18px] font-outfit font-medium">Ankit Srivastava</p>
-              <div className="flex gap-[4px] mt-1">
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#49454FCC" />
-              </div>
-              <p className=" font-outfit text-[#49454FCC] mt-1">
-                "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-                expectations."
-              </p>
-            </div>
-            <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-              <p className="text-[#413B89] text-[18px] font-outfit font-medium">Ankit Srivastava</p>
-              <div className="flex gap-[4px] mt-1">
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#49454FCC" />
-              </div>
-              <p className=" font-outfit text-[#49454FCC] mt-1">
-                "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-                expectations."
-              </p>
-            </div>
-            <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-              <p className="text-[#413B89] text-[18px] font-outfit font-medium">Ankit Srivastava</p>
-              <div className="flex gap-[4px] mt-1">
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#FFB525" />
-                <GoStarFill size={20} color="#49454FCC" />
-              </div>
-              <p className=" font-outfit text-[#49454FCC] mt-1">
-                "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-                expectations."
-              </p>
-            </div>
+            <ReviewList productId={id}/>
           </div>
-          <p className="text-[#438DB8] font-medium font-outfit cursor-pointer">See all reviews -</p>
+
         </div>
+
+
         <ReactModal
           isOpen={modal}
           onRequestClose={() => setModal(false)}

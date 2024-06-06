@@ -2,12 +2,10 @@
 
 import { IoSearch } from "react-icons/io5";
 import { FaStar, FaRegStar } from "react-icons/fa6";
-import Image from "next/image";
-import { IoMdInformation } from "react-icons/io";
 import { IoCloseSharp } from "react-icons/io5";
 import { AiOutlineCheck } from 'react-icons/ai';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteUserByAdmin, getUsers, activateUserByAdmin } from "@/services/auth";
+import { deactivateUserByAdmin, getUsers, activateUserByAdmin } from "@/services/auth";
 import Loader from "react-spinners/PuffLoader";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -31,6 +29,8 @@ export default function Admin() {
     },
   });
 
+  console.log(data)
+
   const handleOpenModal = (user) => {
     setSelectedUser(user);
     setShowModal(true);
@@ -47,8 +47,8 @@ export default function Admin() {
 
   const queryClient = useQueryClient();
 
-  const deleteUserAcc = useMutation({
-    mutationFn: deleteUserByAdmin,
+  const deactivateUserAcc = useMutation({
+    mutationFn: deactivateUserByAdmin,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["admin"],
@@ -75,13 +75,13 @@ export default function Admin() {
     },
   });
 
-  const deleteAcc = (id) => {
+  const deactivateAcc = (id) => {
     const token = localStorage.getItem("duken");
     if (!token) {
       toast.error("An error occurred. Please log in.");
       return router.replace("/login");
     }
-    deleteUserAcc.mutate({ token: JSON.parse(token).token, id: id.toString() });
+    deactivateUserAcc.mutate({ token: JSON.parse(token).token, id: id.toString() });
   };
 
   const activateAcc = (id) => {
@@ -132,16 +132,18 @@ export default function Admin() {
 
               <tbody className="border-[2px] border-[#DFE1E6] font-montserrat text-sm">
               {data.users.map((item) => (
-                  <tr key={item.email} onClick={() => handleOpenModal(item)} className={'border border-grey-300'}>
+                  <tr key={item.email}  className={'border border-grey-300'}>
                     <td className="py-[4px] pl-3 border-x-[2px] border-[#DFE1E6]">
                       <FaRegStar size={15} color="#D9D9D9" />
                     </td>
 
-                    <td className="py-[4px] pl-3 border-x-[2px] border-[#DFE1E6]">{item.company_name}</td>
+
+                    <td className="py-[4px] pl-3 border-x-[2px] border-[#DFE1E6]"
+                        onClick={() => handleOpenModal(item)}>{item.company_name}</td>
 
                     <td className="py-[4px] pl-3 gap-2 flex items-center">
                       <img src={item.img_url ? item.img_url : "/profile_avatar.png"} alt="avatar" className="w-[30px] h-[30px] rounded-full object-contain" />
-                      <span className="text-[#2F65DD]">{item.name}</span>
+                      <span className="text-[#2F65DD]"> {item.name} </span>
                     </td>
 
                     <td className="py-[4px] pl-3 border-x-[2px] border-[#DFE1E6]">
@@ -159,24 +161,19 @@ export default function Admin() {
                     </td>
                     <td className="py-[4px] pl-3 border-x-[2px] border-[#DFE1E6]">
 
-                      <div className="flex items-center gap-2">
-                        <button className={`bg-[#FF7272] hover:bg-[#e66060] p-2 rounded space-x-2 text-white flex justify-center ${item.status === 'pending' || item.status === 'blocked' ? 'hidden' : ''}`} onClick={() => deleteAcc(item.id)}>
-                              <p>Block</p>
-                              <IoCloseSharp size={20} />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <button className={`bg-[#77DD77] hover:bg-[#5ACE5A] p-2 space-x-2 rounded flex justify-center text-white ${item.status === 'active' || item.status === 'blocked' ? 'hidden' : ''}`} onClick={() => activateAcc(item.id)}>
+                      <div className="flex items-center gap-2 my-2">
+                        <button className={`bg-[#77DD77] hover:bg-[#5ACE5A] p-2 space-x-2 rounded flex justify-center text-white ${item.is_active ? 'hidden' : ''}`}
+                                onClick={() => activateAcc(item.id)}>
                           <p>Activate</p>
                           <AiOutlineCheck size={20} />
                         </button>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button className={`bg-[#FFA500] hover:bg-[#E27C00] p-2 space-x-2 rounded flex justify-center text-white ${item.status === 'active' || item.status === 'pending' ? 'hidden' : ''}`} onClick={() => activateAcc(item.id)}>
-                          <p>Unblock</p>
-                          <AiOutlineCheck size={20} />
+                      <div className="flex items-center gap-2 my-2">
+                        <button className={`bg-[#FF7272] hover:bg-[#e66060] p-2 rounded space-x-2 text-white flex justify-center ${item.is_active ? '' : 'hidden'}`}
+                                onClick={() => deactivateAcc(item.id)}>
+                          <p>Deactivate</p>
+                          <IoCloseSharp size={20} />
                         </button>
                       </div>
 
@@ -188,7 +185,7 @@ export default function Admin() {
           </div>
         </div>
 
-        <UserModal showModal={showModal} setShowModal={setShowModal} user={selectedUser} blockUserAccount={deleteAcc} activateUserAccount={activateAcc}/>
+        <UserModal showModal={showModal} setShowModal={setShowModal} user={selectedUser} blockUserAccount={deactivateAcc} activateUserAccount={activateAcc}/>
       </>
   );
 }

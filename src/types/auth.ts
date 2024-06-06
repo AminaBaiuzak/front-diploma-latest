@@ -49,3 +49,13 @@ export type IUpdateEmail = {
   password: string;
   email: string;
 };
+
+export type IAdminList = {
+  id: number;
+  company_name: string;
+  name: string;
+  is_active: boolean;
+  role: "store" | "distributor";
+  img_url: string;
+  subRows?: IAdminList[];
+};

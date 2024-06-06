@@ -95,6 +95,7 @@ export default function NewItemPage() {
       stock: stockNumber,
       city: selectedCity,
       ImgURLs: imgURL,
+      category: selectedCategory,
     };
 
     const token = localStorage.getItem("duken");
@@ -140,7 +141,7 @@ export default function NewItemPage() {
         <div className="w-full flex gap-3 flex-wrap">
           {imgURL.map((url, index) => (
             <div key={index} className="w-[118px]">
-              <img alt="not found" src={url} className="rounded-[8px] object-cover h-[90px] w-full" />
+              <img alt="not found" src={url} className="rounded-[8px] object-cover h-[90px] w-fullobject-cover" />
               <br />
               <button
                 className="rounded-[70px] bg-[#F0EFFA] px-[8px] py-1 flex justify-center items-center gap-1 w-fit"
@@ -178,9 +179,16 @@ export default function NewItemPage() {
             className="text-main text-lg p-[14px] border border-[#42506666] rounded-[8px] w-[50%]"
           >
             <option value={""}></option>
-            <option value={"Category-1"}>Category-1</option>
-            <option value={"Category-2"}>Category-2</option>
-            <option value={"Category-3"}>Category-3</option>
+            <option value={"vegetables"}>Vegetables</option>
+            <option value={"fruits"}>Fruits</option>
+            <option value={"dried fruits"}>Dried fruits</option>
+            <option value={"meat"}>Meat</option>
+            <option value={"beverages"}>MeaBeveragest</option>
+            <option value={"dairy"}>Dairy</option>
+            <option value={"snacks"}>Snacks</option>
+            <option value={"sauces"}>Sauces</option>
+            <option value={"tea"}>Tea</option>
+            <option value={"canned food"}>Canned food</option>
           </select>
         </div>
         <div className="w-full flex gap-[60px]">

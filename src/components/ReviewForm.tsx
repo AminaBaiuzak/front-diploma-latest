@@ -1,12 +1,20 @@
+"use client";
+
 import { useState } from "react";
 import { GoStarFill } from "react-icons/go";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createReview } from "@/services/product";
+import { createReview } from "@/services/reviews";
 import { toast } from "react-toastify";
+import {ReviewData} from "@/types/order";
+import {useRouter} from "next/navigation";
 
-export default function ReviewForm({ distributorId, productId, token }) {
+export default function ReviewForm({ data }) {
+    const router = useRouter();
     const [rating, setRating] = useState<number>(0);
     const [text, setText] = useState<string>("");
+
+    const distributor_id = data.product.distributor_id
+    const product_id = data.product.id
 
     const queryClient = useQueryClient();
 
@@ -14,7 +22,7 @@ export default function ReviewForm({ distributorId, productId, token }) {
         mutationFn: createReview,
         onSuccess: () => {
             queryClient.invalidateQueries("reviews");
-            toast.success("Review created successfully.");
+            toast.success("Than you for your review");
         },
         onError: () => {
             toast.error("An error occurred while creating the review.");
@@ -27,7 +35,20 @@ export default function ReviewForm({ distributorId, productId, token }) {
             return;
         }
 
-        addReview.mutate({ distributorId, productId, rating, text, token });
+        const formData: ReviewData = {
+            distributor_id,
+            rating,
+            text,
+            product_id
+        }
+
+        const token = localStorage.getItem("duken");
+        if (!token) {
+            toast.error("No token found");
+            return router.replace("/login");
+        }
+
+        addReview.mutate({ formData, token: JSON.parse(token).token });
         setRating(0);
         setText("");
     };

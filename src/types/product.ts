@@ -19,6 +19,7 @@ export type IProductUpdate = {
   ImgURLs: string[] | [];
   stock: number;
   city: string;
+  category: string;
 };
 
 export type IProductSell = {
@@ -31,4 +32,5 @@ export type IProductSell = {
   quantity: number;
   order_id: number;
   subRows?: IProductSell[];
+  total?: number;
 };

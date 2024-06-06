@@ -1,6 +1,7 @@
 import {IProductUpdate} from "@/types/product";
 ///////////////////////For reviews/////////////////////////////////
 import axios from "axios";
+import {ReviewData} from "@/types/order";
 
 const createProduct = async (items: { formData: IProductUpdate; token: string }) => {
   const response = await axios.post(process.env.NEXT_PUBLIC_URL + "/api/distributor/products", items.formData, {
@@ -63,77 +64,6 @@ const uploadImage = async (items: { formData: any; token: string }) => {
 
 
 
-const createReview = async (items: { distributorId: string; productId: string; rating: number; text: string; token: string }) => {
-  // const response = await axios.post(
-  //     process.env.NEXT_PUBLIC_URL + "/api/reviews",
-  //     {
-  //       distributorId: items.distributorId,
-  //       productId: items.productId,
-  //       rating: items.rating,
-  //       text: items.text,
-  //     },
-  //     {
-  //       headers: {
-  //         Authorization: "Bearer " + items.token,
-  //       },
-  //     }
-  // );
-  // return response.data;
-  console.log(items.rating)
-  console.log(items.text)
-};
-
-
-
-
-const getReviewsByStoreId = async (storeId: string, token: string) => {
-  const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/reviews/store/${storeId}`, {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  return response.data;
-};
-
-const getReviewsByDistributorId = async (distributorId: string, token: string) => {
-  const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/reviews/distributor/${distributorId}`, {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  return response.data;
-};
-
-const deleteReview = async (reviewId: string, token: string) => {
-  const response = await axios.delete(process.env.NEXT_PUBLIC_URL + `/api/reviews/${reviewId}`, {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  return response.data;
-};
-
-const getReviewsByProductId = async (productId: string, token: string) => {
-  const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/reviews/product/${productId}`, {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  return response.data;
-};
-
-const getAverageRatingByDistributorId = async (distributorId: string, token: string) => {
-  const reviews = await getReviewsByDistributorId(distributorId, token);
-
-  if (reviews.length === 0) {
-    return 0;
-  }
-
-  const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
-  return totalRating / reviews.length;
-};
-
-
 export {
   createProduct,
   getProducts,
@@ -141,12 +71,4 @@ export {
   updateProduct,
   deleteProduct,
   uploadImage,
-
-  createReview,
-  getReviewsByStoreId,
-  getReviewsByDistributorId,
-  deleteReview,
-  getReviewsByProductId,
-  getAverageRatingByDistributorId,
-
 };

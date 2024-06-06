@@ -172,7 +172,7 @@ export default function page() {
                       <img
                         src={item.product.ImgURLs !== null && item.product.ImgURLs.length > 0 ? item.product.ImgURLs[0] : "/3d_1.png"}
                         alt="abstract"
-                        className="w-[90px] h-[65px] rounded-[8px] overflow-hidden object-cover"
+                        className="w-[90px] h-[65px] rounded-[8px] overflow-hidden object-contain"
                       />
                       <div className="flex flex-col justify-center gap-[10px]">
                         <p className="text-[18px] font-semibold font-montserrat">{item.product.product_name}</p>

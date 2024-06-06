@@ -18,18 +18,25 @@ export default function ProductsPage() {
       {
         accessorKey: "ImgURLs[0]",
         header: () => <span>Product Photo</span>,
+          enableSorting: false,
       },
       {
         accessorKey: "product_name",
         header: () => <span>Product Name</span>,
+          enableSorting: false,
+          filterFn: "includesString",
       },
       {
         accessorKey: "price",
         header: () => <span>Price</span>,
+          sortingFn: (rowA, rowB) => rowA.original.price - rowB.original.price,
+
       },
       {
         accessorKey: "stock",
         header: () => <span>Available quantity</span>,
+          enableSorting: false,
+
       },
     ],
     []

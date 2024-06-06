@@ -1,6 +1,6 @@
 "use client";
 
-import { getStoreProfile } from "@/services/auth";
+import {getStoreProfile, registerUser} from "@/services/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -9,6 +9,9 @@ import { MdOutlinePeopleAlt } from "react-icons/md";
 import { CiCircleMinus } from "react-icons/ci";
 import { GoStarFill } from "react-icons/go";
 import { toast } from "react-toastify";
+import ReviewInProfile from "@/components/ReviewInProfile";
+import {deleteReview, getReviewsByStore} from "@/services/reviews";
+import {useMutation} from "@tanstack/react-query/build/modern/index";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -24,6 +27,18 @@ export default function ProfilePage() {
     },
   });
 
+  const { data: reviews, isLoading: reviewsLoading, isError: reviewsError } = useQuery({
+    queryKey: ["reviews"],
+    queryFn: () => {
+      const token = localStorage.getItem("duken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      return getReviewsByStore(JSON.parse(token).token);
+    },
+    enabled: !!data,
+  });
+
   useEffect(() => {
     if (isError) {
       localStorage.removeItem("duken");
@@ -31,6 +46,26 @@ export default function ProfilePage() {
       router.replace("/login");
     }
   }, [isError]);
+
+  const deleteReviewByStore = useMutation({
+    mutationFn: deleteReview,
+    onSuccess: () => {
+      toast.success("Your review has been deleted");
+    },
+    onError: () => {
+      toast.error("Deletion of review failed");
+    },
+  });
+
+  const handleDelete = async (review_id) => {
+
+    const token = localStorage.getItem("duken");
+    if (!token) {
+      return router.replace("/login");
+    }
+
+    deleteReviewByStore.mutate({review_id, token: JSON.parse(token).token})
+  }
 
   if (isLoading) return <Loader color={"#367193"} loading={true} size={150} className="m-auto mt-7" />;
   if (isError) return null;
@@ -104,91 +139,10 @@ export default function ProfilePage() {
         <p className="font-medium text-[14px] mt-5 px-[9px]">My Reviews</p>
 
         <div className="flex flex-col gap-[8px] my-[8px]">
-
-          <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-            <p className="text-[#413B89] text-[14px] font-outfit font-medium">Ankit Srivastava</p>
-            <div className="flex gap-[4px] mt-1">
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#49454FCC" />
-            </div>
-            <p className=" font-outfit text-[#49454FCC] mt-1 text-[14px]">
-              "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-              expectations."
-            </p>
-          </div>
-          <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-            <p className="text-[#413B89] text-[14px] font-outfit font-medium">Ankit Srivastava</p>
-            <div className="flex gap-[4px] mt-1">
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#49454FCC" />
-            </div>
-            <p className=" font-outfit text-[#49454FCC] mt-1 text-[14px]">
-              "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-              expectations."
-            </p>
-          </div>
-          <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-            <p className="text-[#413B89] text-[14px] font-outfit font-medium">Ankit Srivastava</p>
-            <div className="flex gap-[4px] mt-1">
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#49454FCC" />
-            </div>
-            <p className=" font-outfit text-[#49454FCC] mt-1 text-[14px]">
-              "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-              expectations."
-            </p>
-          </div>
-          <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-            <p className="text-[#413B89] text-[14px] font-outfit font-medium">Ankit Srivastava</p>
-            <div className="flex gap-[4px] mt-1">
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#49454FCC" />
-            </div>
-            <p className=" font-outfit text-[#49454FCC] mt-1 text-[14px]">
-              "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-              expectations."
-            </p>
-          </div>
-          <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-            <p className="text-[#413B89] text-[14px] font-outfit font-medium">Ankit Srivastava</p>
-            <div className="flex gap-[4px] mt-1">
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#49454FCC" />
-            </div>
-            <p className=" font-outfit text-[#49454FCC] mt-1 text-[14px]">
-              "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-              expectations."
-            </p>
-          </div>
-          <div className=" w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px]">
-            <p className="text-[#413B89] text-[14px] font-outfit font-medium">Ankit Srivastava</p>
-            <div className="flex gap-[4px] mt-1">
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#FFB525" />
-              <GoStarFill size={20} color="#49454FCC" />
-            </div>
-            <p className=" font-outfit text-[#49454FCC] mt-1 text-[14px]">
-              "Wow! I'm blown away by the quality and functionality of this product. I've been using it for a few weeks now, and it has exceeded my
-              expectations."
-            </p>
-          </div>
+          {reviews ?
+              reviews.map(review => (
+                  <ReviewInProfile key={review.id} review={review} role={'store'} onDelete={handleDelete(review.id)}/>
+              )) : (<p> You have not written any reviews yet</p>)}
         </div>
 
       </div>

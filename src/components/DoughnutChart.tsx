@@ -13,7 +13,7 @@ const DoughnutChart = ({ rating }) => {
         datasets: [
             {
                 data: [rating, 100 - rating],
-                backgroundColor: ['#438DB8', '#E5E5E5'],
+                backgroundColor: ['#8CD6AE', '#E5E5E5'],
                 hoverBackgroundColor: ['#E5E5E5', '#E5E5E5'],
                 borderWidth: 0,
             },
@@ -55,7 +55,7 @@ const DoughnutChart = ({ rating }) => {
                 <p className="text-gray-600 mb-10">Shop representatives that buy products</p>
             </div>
             <div className="relative">
-                <Doughnut ref={chartRef} data={data} options={options}/>
+                <Doughnut ref={chartRef} data={data} options={options} className={'w-[300px]'}/>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-[45px] font-semibold">{`${rating}%`}</span>
                     <span className="text-[20px] text-gray-600">Average rate</span>

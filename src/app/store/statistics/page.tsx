@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getStoreStatistics } from "@/services/orders_store";
 import { IProductSell } from "@/types/product";
 import { toast } from "react-toastify";
+import BarChart from "@/components/BarChart";
 
 export default function StatisticsPage() {
   const router = useRouter();
@@ -53,8 +54,8 @@ export default function StatisticsPage() {
         header: () => <span>Price</span>,
       },
       {
-        accessorKey: "product.stock",
-        header: () => <span>My Sales</span>,
+        accessorKey: "total_price",
+        header: () => <span>Total</span>,
       },
     ],
     []
@@ -99,9 +100,11 @@ export default function StatisticsPage() {
           </div>
         </div>
       </div>
-      <div className="flex justify-around gap-[24px] w-full">
-        <img src={"/overview.png"} alt="" style={{ width: "100%", height: "auto", objectFit: "cover" }} />
+
+      <div className="flex justify-around w-full">
+        <BarChart/>
       </div>
+
       <ProductsTable data={data.orders} columns={columns} />
     </div>
   );

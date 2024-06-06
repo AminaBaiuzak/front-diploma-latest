@@ -142,9 +142,9 @@ const getUsers = async (token: string) => {
   return response.data;
 };
 
-const deleteUserByAdmin = async (items: { token: string, id: string }) => {
-  const response = await axios.delete(
-    process.env.NEXT_PUBLIC_URL + `/api/admin/delete/user/${items.id}`,
+const deactivateUserByAdmin = async (items: { token: string, id: string }) => {
+  const response = await axios.post(
+    process.env.NEXT_PUBLIC_URL + `/api/admin/deactivate/user/${items.id}`,
     {
       headers: {
         Authorization: "Bearer " + items.token,
@@ -155,7 +155,7 @@ const deleteUserByAdmin = async (items: { token: string, id: string }) => {
 };
 
 const activateUserByAdmin = async (items: { token: string, id: string }) => {
-  const response = await axios.delete(
+  const response = await axios.post(
       process.env.NEXT_PUBLIC_URL + `/api/admin/activate/user/${items.id}`,
       {
         headers: {
@@ -177,6 +177,6 @@ export {
   updateEmail,
   deleteUser,
   getUsers,
-  deleteUserByAdmin,
+  deactivateUserByAdmin,
   activateUserByAdmin,
 };
