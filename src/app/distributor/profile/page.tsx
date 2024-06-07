@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { GoStarFill } from "react-icons/go";
 import Loader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
 import { getProfile } from "@/services/auth";
@@ -13,7 +12,7 @@ import ReviewInProfile from "@/components/ReviewInProfile";
 export default function ProfilePage() {
   const router = useRouter();
 
-  const { data: profileData, isLoading: profileLoading, isError: profileError } = useQuery({
+  const { data: profileData, isLoading: profileDataLoading, isError: profileDataError } = useQuery({
     queryKey: ["profile"],
     queryFn: () => {
       const token = localStorage.getItem("duken");
@@ -24,7 +23,7 @@ export default function ProfilePage() {
     },
   });
 
-  const { data: reviews, isLoading: reviewsLoading, isError: reviewsError } = useQuery({
+  const { data: reviewsData, isLoading: reviewsLoading, isError: reviewsError } = useQuery({
     queryKey: ["reviews"],
     queryFn: () => {
       const token = localStorage.getItem("duken");
@@ -36,31 +35,26 @@ export default function ProfilePage() {
     enabled: !!profileData,
   });
 
-  console.log("Reviews in distributor profile: ", reviews)
+  console.log("Reviews in distributor profile: ", reviewsData)
+  console.log("Distributor data: ", profileData)
 
   useEffect(() => {
-    if (profileError
-        // || reviewsError
-    ) {
+    if (profileDataError) {
       toast.error("Session expired. Please log in again.");
       localStorage.removeItem("duken");
       router.replace("/login");
     }
-  }, [profileError, reviewsError]);
+  }, [profileDataError]);
 
-  if (profileLoading || reviewsLoading) {
+  if (profileDataLoading || reviewsLoading)
     return <Loader color={"#367193"} loading={true} size={150} className="m-auto mt-7" />;
-  }
 
-  if (profileError
-      // || reviewsError
-  ) {
-    return null;
-  }
+  if (profileDataError || reviewsError) return null;
 
   return (
       <div className="pl-[110px] pr-[76px] pt-[30px] pb-[80px] bg-[#36719314] w-full flex gap-[7px]">
-        <div className="bg-white w-[50%] h-full rounded-lg pl-[30px] pr-[50px] border border-[#EBEBEE] shadow-md  pt-[13px]">
+        <div className="bg-white w-[50%] h-full rounded-lg pl-[30px] pr-[50px] border border-[#EBEBEE] shadow-md pt-[13px]"
+             style={{"padding-bottom": "20px"}}>
           <div className=" rounded-full w-[104px] h-[104px] flex justify-center items-center overflow-hidden">
             <img src={profileData.distributor.img_url ? profileData.distributor.img_url : "/profile_avatar.png"} alt="" className="w-[100px] h-[100px] object-cover" />
           </div>
@@ -104,13 +98,13 @@ export default function ProfilePage() {
           <div className="rounded-[7px] py-[8px] px-[9px] font-outfit">
             <p className=" font-medium text-[14px]">Professional Details</p>
             <p className="text-[#49454FCC] text-[14px]">These are the professional details shown to users in the app.</p>
-            <p className="text-[15px] mt-5 break-words">{(profileData.distributor.details && profileData.distributor.details !== " ") ? profileData.distributor.details : "Please add company details"}</p>
+            <p className="text-[15px] mt-3 break-words border p-3 rounded-[7px]">{(profileData.distributor.details && profileData.distributor.details !== " ") ? profileData.distributor.details : "Please add company details"}</p>
           </div>
 
           <p className="font-medium text-[14px] mt-5 px-[9px]">Customer Reviews</p>
           <div className="flex flex-col gap-[8px] my-[8px]">
-            {reviews ?
-            reviews.map(review => (
+            {reviewsData?.reviews.length ?
+                reviewsData.reviews.map(review => (
                 <ReviewInProfile key={review.id} review={review} role={'distributor'}/>
             )) : (<p> You have not received any reviews yet</p>)}
           </div>

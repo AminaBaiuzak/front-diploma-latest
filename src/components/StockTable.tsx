@@ -25,6 +25,8 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+
   const table = useReactTable({
     columns,
     data,
@@ -40,7 +42,9 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    // onColumnFiltersChange: (filters) => {
+    //   setColumnFilters([...filters, { id: "category", value: selectedCategory }]);
+    // },
   });
 
   const pathname: string = usePathname();
@@ -75,14 +79,23 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                       placeholder="Search"
                       className="placeholder-[#B5B7C0] bg-transparent text-[14px] font-outfit w-full outline-none ml-[8px]"
                       onChange={(e) => {
-                        table.setColumnFilters(() => [
-                          {
-                            id: "product_name",
-                            value: e.target.value,
-                          },
-                        ]);
+                        const value = e.target.value;
+                        table.setColumnFilters((filters) => {
+                          if (!Array.isArray(filters)) {
+                            filters = [];
+                          }
+                          const updatedFilters = filters.filter((f) => f.id !== "product_name");
+                          if (value !== "") {
+                            updatedFilters.push({
+                              id: "product_name",
+                              value: value,
+                            });
+                          }
+                          return updatedFilters;
+                        });
                       }}
                   />
+
                 </div>
                 <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
                   <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Sort by Price:</span>
@@ -98,6 +111,22 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                     <option value="">All</option>
                     <option value="low_to_high">Low to high</option>
                     <option value="high_to_low">High to low</option>
+                  </select>
+                </div>
+                <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
+                  <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Category:</span>
+                  <select
+                      name="selectCategory"
+                      className="flex-1 bg-[#F9FBFF] h-full text-[14px] font-outfit"
+                      onChange={(e) => {
+                        setSelectedCategory(e.target.value);
+                      }}
+                  >
+                    <option value="">All</option>
+                    <option value="fruits">Fruits</option>
+                    <option value="vegetables">Vegetables</option>
+                    <option value="canned food">Canned Food</option>
+                    <option value="dairy">Dairy</option>
                   </select>
                 </div>
               </div>
@@ -194,11 +223,11 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                   {"<"}
                 </button>
                 <span className="flex items-center gap-1 font-outfit text-main">
-              <div>Page</div>
-              <strong>
-                {table.getState().pagination.pageIndex + 1} of {table.getPageCount().toLocaleString()}
-              </strong>
-            </span>
+                  <div>Page</div>
+                  <strong>
+                  {table.getState().pagination.pageIndex + 1} of {table.getPageCount().toLocaleString()}
+                  </strong>
+                  </span>
                 <button
                     className="border rounded w-[26px] h-[24px] bg-[#EEEEEE] flex justify-center items-center"
                     onClick={() => table.nextPage()}

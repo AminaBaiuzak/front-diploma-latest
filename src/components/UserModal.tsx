@@ -1,10 +1,22 @@
 "use client";
 
-import React from 'react';
+import React, {useState} from 'react';
 import { IoCloseSharp } from 'react-icons/io5';
 
-const UserModal = ({ showModal, setShowModal, user, blockUserAccount, activateUserAccount }) => {
+const UserModal = ({ showModal, setShowModal, user, deactivateUserAccount, activateUserAccount }) => {
+    const [isActive, setIsActive] = useState(user?.is_active)
     if (!showModal || !user) return null;
+
+    const handleActivateUser = (id) => {
+        activateUserAccount(id)
+        setIsActive(true)
+    }
+
+    const handleDeactivateUser = (id) => {
+        deactivateUserAccount(id)
+        setIsActive(false)
+    }
+
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
@@ -31,14 +43,14 @@ const UserModal = ({ showModal, setShowModal, user, blockUserAccount, activateUs
                 <div>
 
                     <button
-                        className={`${user.is_active ? '' : 'hidden'} px-4 py-2 bg-[#DD5152] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#AB2E2B] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 my-2`}
-                        onClick={() => blockUserAccount(user.id)}>
+                        className={`${isActive ? '' : 'hidden'} px-4 py-2 bg-[#DD5152] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#AB2E2B] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 my-2`}
+                        onClick={() => handleDeactivateUser(user.id)}>
                         Deactivate
                     </button>
 
                     <button
-                        className={`${user.is_active ? 'hidden' : ''} px-4 py-2 bg-[#77DD77] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#5ACE5A] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 my-2`}
-                        onClick={() => activateUserAccount(user.id)}>
+                        className={`${isActive ? 'hidden' : ''} px-4 py-2 bg-[#77DD77] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#5ACE5A] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 my-2`}
+                        onClick={() => handleActivateUser(user.id)}>
                         Activate
                     </button>
 

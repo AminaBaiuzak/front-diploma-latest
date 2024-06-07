@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { RiMapPinLine } from "react-icons/ri";
 import { FaRegStar } from "react-icons/fa";
 import { TiMessageTyping } from "react-icons/ti";
-import { GoStarFill } from "react-icons/go";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "react-spinners/PuffLoader";
 import { getStoreProductById, addToCart } from "@/services/product_store";
@@ -15,22 +14,22 @@ import { PiShoppingCart } from "react-icons/pi";
 import ReactModal from "react-modal";
 import { toast } from "react-toastify";
 import ReviewForm from "@/components/ReviewForm";
-import {getReviewsByProductId} from "@/services/reviews";
-import ReviewList from "@/components/ReviewList";
+import {getReviewsByProductIdForStore} from "@/services/reviews";
+import {getStoreStatistics} from "@/services/orders_store";
+import Review from "@/components/Review";
 
 export default function page() {
   const [selectedImage, setSelectedImage] = useState("");
   const [modal, setModal] = useState(false);
   const [count, setCount] = useState(0);
-
   const [showReviewForm, setShowReviewForm] = useState(false);
-
+  const [productReviews, setProductReviews] = useState([])
 
   const router = useRouter();
 
   const { id } = useParams<{ id: string }>();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data: product, isLoading: productLoading, isError: productError } = useQuery({
     queryKey: ["product_store", id],
     queryFn: () => {
       const token = localStorage.getItem("duken");
@@ -41,31 +40,52 @@ export default function page() {
     },
   });
 
-  console.log("Data about product", data)
+  const { data: statistics, isLoading: statisticsLoading, isError: statisticsError } = useQuery({
+    queryKey: ["statistics_store"],
+    queryFn: () => {
+      const token = localStorage.getItem("duken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      return getStoreStatistics(JSON.parse(token).token);
+    },
+  });
+
+  const {data: reviewData, isLoading: reviewDataLoading, isError: reviewDataError } = useQuery({
+    queryKey: ["reviewData_for_product_store"],
+    queryFn: () => {
+      const token = localStorage.getItem("duken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      return getReviewsByProductIdForStore(id, JSON.parse(token).token);
+    },
+    enabled: !!product,
+  });
 
   useEffect(() => {
-    if (isError) {
+    if (productError) {
       localStorage.removeItem("duken");
       router.replace("/login");
       toast.error("An error occurred. Please log in.");
     }
-  }, [isError]);
+  }, [productError]);
 
   const dec = () => {
     if (count > 0) {
       setCount(count - 1);
     }
-    if (count > data.product.stock) {
-      setCount(data.product.stock);
+    if (count > product.product.stock) {
+      setCount(product.product.stock);
     }
   };
 
   const inc = () => {
-    if (count < data.product.stock) {
+    if (count < product.product.stock) {
       setCount(count + 1);
     }
-    if (count > data.product.stock) {
-      setCount(data.product.stock);
+    if (count > product.product.stock) {
+      setCount(product.product.stock);
     }
   };
 
@@ -95,8 +115,25 @@ export default function page() {
     add.mutate({ formData: formData, token: JSON.parse(token).token, id: id });
   };
 
-  if (isLoading) return <Loader color={"#367193"} loading={true} size={150} className="m-auto mt-7" />;
-  if (isError) return null;
+  useEffect(() => {
+    const needed_store_id = id
+    if (statistics) {
+      const array = statistics.orders
+      console.log(array)
+      const orderWithProductId = array.find(order => order.product_id === Number(needed_store_id));
+      const hasProduct = orderWithProductId !== undefined;
+      setShowReviewForm(hasProduct)
+    }
+  }, [statistics, id]);
+
+  useEffect(() => {
+    if (reviewData !== undefined){
+      setProductReviews(reviewData.reviews)
+    }
+  }, [reviewData])
+
+  if (productLoading || reviewDataLoading) return <Loader color={"#367193"} loading={true} size={150} className="m-auto mt-7" />;
+  if (productError || reviewDataError) return null;
 
   return (
     <div className="pl-[103px] pr-[37px] pt-[30px] pb-[80px] bg-[#36719314] flex-1 flex font-outfit">
@@ -104,10 +141,10 @@ export default function page() {
         <div className="flex pt-[25px] px-[30px] pb-[30px] border-b border-[#21212180]">
           <div className="flex flex-col flex-1 pr-[20px]">
             <div className="w-full aspect-square rounded-[8px] overflow-hidden">
-              {data.product.ImgURLs !== null && data.product.ImgURLs.length > 0 ? (
+              {product.product.ImgURLs !== null && product.product.ImgURLs.length > 0 ? (
                 <img
                   alt="product photo"
-                  src={selectedImage ? selectedImage : data.product.ImgURLs[0]}
+                  src={selectedImage ? selectedImage : product.product.ImgURLs[0]}
                   style={{ objectPosition: "center", height: "100%", width: "100%" }}
                   className={'object-contain'}
                 />
@@ -118,16 +155,16 @@ export default function page() {
             <div className="flex gap-[15px] w-full mt-[28px] items-center justify-center">
               <button
                 onClick={() => {
-                  if (data.product.ImgURLs !== null) {
-                    const currentIndex = selectedImage ? data.product.ImgURLs.indexOf(selectedImage) : 0;
-                    setSelectedImage(data.product.ImgURLs[(currentIndex - 1 + data.product.ImgURLs.length) % data.product.ImgURLs.length]);
+                  if (product.product.ImgURLs !== null) {
+                    const currentIndex = selectedImage ? product.product.ImgURLs.indexOf(selectedImage) : 0;
+                    setSelectedImage(product.product.ImgURLs[(currentIndex - 1 + product.product.ImgURLs.length) % product.product.ImgURLs.length]);
                   }
                 }}
               >
                 <IoChevronBackOutline size={18} color="black" />
               </button>
-              {data.product.ImgURLs !== null && data.product.ImgURLs.length > 0 ? (
-                data.product.ImgURLs.map((url: string, index: any) => (
+              {product.product.ImgURLs !== null && product.product.ImgURLs.length > 0 ? (
+                product.product.ImgURLs.map((url: string, index: any) => (
                   <div
                     key={index}
                     className="w-[87px] h-[87px] rounded-[10px] overflow-hidden"
@@ -171,9 +208,9 @@ export default function page() {
               )}
               <button
                 onClick={() => {
-                  if (data.product.ImgURLs !== null) {
-                    const currentIndex = selectedImage ? data.product.ImgURLs.indexOf(selectedImage) : 0;
-                    setSelectedImage(data.product.ImgURLs[(currentIndex + 1) % data.product.ImgURLs.length]);
+                  if (product.product.ImgURLs !== null) {
+                    const currentIndex = selectedImage ? product.product.ImgURLs.indexOf(selectedImage) : 0;
+                    setSelectedImage(product.product.ImgURLs[(currentIndex + 1) % product.product.ImgURLs.length]);
                   }
                 }}
               >
@@ -183,22 +220,22 @@ export default function page() {
           </div>
           <div className="flex flex-1 flex-col justify-center pl-[20px]">
             <div className="flex items-center gap-3">
-              <span className=" font-montserrat font-semibold text-[26px]">{data.product.product_name}</span>
-              <span className="text-[#3A4980] text-[20px] border-[#00000080] border rounded-xl px-[12px] font-bold">In stock: {data.product.stock}</span>
+              <span className=" font-montserrat font-semibold text-[26px]">{product.product.product_name}</span>
+              <span className="text-[#3A4980] text-[20px] border-[#00000080] border rounded-xl px-[12px] font-bold">In stock: {product.product.stock}</span>
             </div>
-            <p className="text-[#B9BBBF] font-outfit text-[20px] mr-2">{data.product.distributor.company_name}</p>
+            <p className="text-[#B9BBBF] font-outfit text-[20px] mr-2">{product.product.distributor.company_name}</p>
             <div className="flex items-center mt-2">
-              <span className="font-outfit text-[18px] mr-2">{data.product.distributor.city}</span>
+              <span className="font-outfit text-[18px] mr-2">{product.product.distributor.city}</span>
               <RiMapPinLine size={15} color="black" />
             </div>
             <div className="rounded-[20px] bg-[#FFC350CC] w-ful py-1 flex justify-center my-[19px]">
-              <span className=" uppercase text-white">{data.product.category}</span>
+              <span className=" uppercase text-white">{product.product.category}</span>
             </div>
             <div className="pt-[21px] px-[15px] pb-[32px] mb-[38px] border rounded-[10px] border-black">
-              <p className=" font-outfit text-[12px]">{data.product.product_description}</p>
+              <p className=" font-outfit text-[18px]">{product.product.product_description}</p>
             </div>
             <div className="border rounded-[10px] border-black py-[9px] flex items-center">
-              <span className=" font-montserrat font-bold text-[26px] text-[#3A4980] ml-4 mr-5">{data.product.price} {'\u20B8'}</span>
+              <span className=" font-montserrat font-bold text-[26px] text-[#3A4980] ml-4 mr-5">{product.product.price} {'\u20B8'}</span>
               <div>
                 <div className="flex gap-[9px]">
                   <div className="rounded-[20px] bg-[#FBF3EA] py-[8px] px-[10px] flex items-center justify-center gap-[5px]">
@@ -222,7 +259,7 @@ export default function page() {
                 <input
                   type="number"
                   className="pl-[15px] font-outfit text-[20px] h-full w-[100px] border border-black rounded-[10px] text-center"
-                  max={data.product.stock.toString()}
+                  max={product.product.stock.toString()}
                   min="0"
                   value={count}
                   onChange={(e) => setCount(parseInt(e.target.value))}
@@ -233,7 +270,7 @@ export default function page() {
               </div>
               <div
                 onClick={() => {
-                  if (count > data.product.stock) {
+                  if (count > product.product.stock) {
                     return toast.warn("You can't add more than the available stock");
                   }
                   if (count <= 0) {
@@ -251,12 +288,19 @@ export default function page() {
         </div>
         <div>
 
-          <ReviewForm data={data}/>
+          {showReviewForm && <ReviewForm data={product} />}
 
           <p className=" font-medium text-[18px] font-outfit">Customer Reviews</p>
-          <div className="flex flex-col gap-[8px] my-[8px]">
-            <ReviewList productId={id}/>
-          </div>
+          {/*<div className="flex flex-col gap-[8px] my-[8px]">*/}
+          {/*  <div className="mt-[20px]">*/}
+          {/*    {productReviews ?*/}
+          {/*        productReviews.slice().reverse().map((review: any) => (*/}
+          {/*            <Review key={review.id} review={review} />*/}
+          {/*        )) :*/}
+          {/*        <p>There are no reviews yet</p>*/}
+          {/*    }*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
         </div>
 
@@ -283,16 +327,16 @@ export default function page() {
             </div>
             <div className=" w-[60%] rounded-[10px] border-[0.5px] border-[#00000080] flex">
               <img
-                src={data.product.ImgURLs !== null && data.product.ImgURLs.length > 0 ? data.product.ImgURLs[0] : "/3d_1.png"}
+                src={product.product.ImgURLs !== null && product.product.ImgURLs.length > 0 ? product.product.ImgURLs[0] : "/3d_1.png"}
                 alt="image"
                 style={{objectPosition: "center", height: "100%", width: "50%" }}
                 className={'object-contain'}
               />
               <div className="flex flex-col pap-[10px] justify-center">
-                <span className="text-[26px] font-semibold font-montserrat ">{data.product.product_name}</span>
-                <span className="text-[20px] font-outfit text-[#B9BBBF]">{data.product.distributor.company_name}</span>
+                <span className="text-[26px] font-semibold font-montserrat ">{product.product.product_name}</span>
+                <span className="text-[20px] font-outfit text-[#B9BBBF]">{product.product.distributor.company_name}</span>
                 <span className="text-[20px] font-outfit">Quantity: {count}</span>
-                <span className="text-[20px] font-outfit">Total price: ${parseFloat((count * data.product.price).toFixed(2))}</span>
+                <span className="text-[20px] font-outfit">Total price: ${parseFloat((count * product.product.price).toFixed(2))}</span>
               </div>
             </div>
             <div className="w-[60%] flex justify-center gap-[12px] mb-[40px] mt-[26px]">

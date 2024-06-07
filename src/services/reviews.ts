@@ -9,8 +9,8 @@ const createReview = async (items: { formData: ReviewData; token: string }) => {
             },
         });
 
-    console.log(items.formData.rating)
-    console.log(items.formData.text)
+    // console.log(items.formData.rating)
+    // console.log(items.formData.text)
 
     return response.data;
 };
@@ -26,7 +26,7 @@ const getReviewsByStore = async (token: string) => {
 };
 
 const getReviewsByDistributor = async (token: string) => {
-    const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/distributor/reviews/`, {
+    const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/distributor/reviews`, {
         headers: {
             Authorization: "Bearer " + token,
         },
@@ -43,7 +43,16 @@ const deleteReview = async (reviewId: string, token: string) => {
     return response.data;
 };
 
-const getReviewsByProductId = async (productId: string, token: string) => {
+const getReviewsByProductIdForStore = async (productId: string, token: string) => {
+    const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/store/reviews/product/${productId}`, {
+        headers: {
+            Authorization: "Bearer " + token,
+        },
+    });
+    return response.data;
+};
+
+const getReviewsByProductIdForDistributor = async (productId: string, token: string) => {
     const response = await axios.get(process.env.NEXT_PUBLIC_URL + `/api/distributor/reviews/product/${productId}`, {
         headers: {
             Authorization: "Bearer " + token,
@@ -54,6 +63,7 @@ const getReviewsByProductId = async (productId: string, token: string) => {
 
 const getAverageRatingByDistributorId = async ( token: string) => {
     const reviews = await getReviewsByDistributor(token);
+    console.log(reviews)
 
     if (reviews.length === 0) {
         return 0;
@@ -69,6 +79,7 @@ export
     getReviewsByStore,
     getReviewsByDistributor,
     deleteReview,
-    getReviewsByProductId,
+    getReviewsByProductIdForStore,
+    getReviewsByProductIdForDistributor,
     getAverageRatingByDistributorId,
 }

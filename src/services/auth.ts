@@ -142,9 +142,28 @@ const getUsers = async (token: string) => {
   return response.data;
 };
 
+const getDistributorUserWithoutToken = async (id: string) => {
+  // const response = await axios.get(
+  //     process.env.NEXT_PUBLIC_URL + `/api/distributor/user/${id}`,
+  // );
+  // return response.data;
+
+  return `${id} My distributor Inc.`
+};
+
+const getStoreUserWithoutToken = async (id: string) => {
+  // const response = await axios.get(
+  //     process.env.NEXT_PUBLIC_URL + `/api/store/user/${id}`,
+  // );
+  // return response.data;
+
+  return `${id} My store Inc.`
+};
+
 const deactivateUserByAdmin = async (items: { token: string, id: string }) => {
   const response = await axios.post(
     process.env.NEXT_PUBLIC_URL + `/api/admin/deactivate/user/${items.id}`,
+      {},
     {
       headers: {
         Authorization: "Bearer " + items.token,
@@ -155,14 +174,17 @@ const deactivateUserByAdmin = async (items: { token: string, id: string }) => {
 };
 
 const activateUserByAdmin = async (items: { token: string, id: string }) => {
+  console.log("From function activateUserByAdmin: ", items.id, items.token);
   const response = await axios.post(
       process.env.NEXT_PUBLIC_URL + `/api/admin/activate/user/${items.id}`,
+      {},
       {
         headers: {
           Authorization: "Bearer " + items.token,
         },
       }
   );
+  console.log("From function activateUserByAdmin: ", items.id, items.token);
   return response.data;
 };
 
@@ -179,4 +201,6 @@ export {
   getUsers,
   deactivateUserByAdmin,
   activateUserByAdmin,
+  getDistributorUserWithoutToken,
+  getStoreUserWithoutToken,
 };

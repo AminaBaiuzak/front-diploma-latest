@@ -13,11 +13,12 @@ import { IProductSell } from "@/types/product";
 import { toast } from "react-toastify";
 import BarChart from "@/components/BarChart";
 import DoughnutChart from "@/components/DoughnutChart";
+import {getAverageRatingByDistributorId} from "@/services/reviews";
 
 export default function StatisticsPage() {
   const router = useRouter();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data: orders, isLoading: ordersLoading, isError: ordersError } = useQuery({
     queryKey: ["statistics_store"],
     queryFn: () => {
       const token = localStorage.getItem("duken");
@@ -28,15 +29,26 @@ export default function StatisticsPage() {
     },
   });
 
-  console.log("✌️data.orders for distributor for bar chart and the table --->", data)
+  const { data: rating, isLoading: ratingLoading, isError:ratingError } = useQuery({
+    queryKey: ["reviews"],
+    queryFn: () => {
+      const token = localStorage.getItem("duken");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      return getAverageRatingByDistributorId(JSON.parse(token).token);
+    },
+  });
+
+  console.log("✌️data.orders for distributor for bar chart and the table --->", orders)
 
   useEffect(() => {
-    if (isError) {
+    if (ordersError) {
       localStorage.removeItem("duken");
       router.replace("/login");
       toast.error("An error occurred. Please log in.");
     }
-  }, [isError]);
+  }, [ordersError]);
 
   const columns = useMemo<ColumnDef<IProductSell>[]>(
     () => [
@@ -64,8 +76,8 @@ export default function StatisticsPage() {
     []
   );
 
-  if (isLoading) return <Loader color={"#367193"} loading={true} size={150} className="m-auto mt-7" />;
-  if (isError) return null;
+  if (ordersLoading) return <Loader color={"#367193"} loading={true} size={150} className="m-auto mt-7" />;
+  if (ordersError) return null;
 
   return (
     <div className="pl-[103px] pr-[37px] pt-[30px] pb-[80px] bg-[#36719314] flex-1 flex flex-col gap-[24px]">
@@ -76,7 +88,7 @@ export default function StatisticsPage() {
           </div>
           <div>
             <p className=" font-montserrat text-sm text-[#ACACAC]">Sold (overall)</p>
-            <p className=" font-outfit font-semibold text-[32px] text-main">${data.sold_overall.toFixed(2)}</p>
+            <p className=" font-outfit font-semibold text-[32px] text-main">${orders.sold_overall.toFixed(2)}</p>
             <div className="flex items-center gap-1">
               <IoArrowUpOutline size={15} color="#00AC4F" />
               <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>
@@ -91,7 +103,7 @@ export default function StatisticsPage() {
             </div>
             <div>
               <p className=" font-montserrat text-sm text-[#ACACAC]">Sold in month</p>
-              <p className=" font-outfit font-semibold text-[32px] text-main">${data.sold_in_month.toFixed(2)}</p>
+              <p className=" font-outfit font-semibold text-[32px] text-main">${orders.sold_in_month.toFixed(2)}</p>
               <div className="flex items-center gap-1">
                 <IoArrowDownOutline size={15} color="#D0004B" />
                 <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>
@@ -107,12 +119,12 @@ export default function StatisticsPage() {
           <BarChart />
         </div>
         <div className="w-[400]">
-          <DoughnutChart rating={90} />
+          <DoughnutChart rating={rating} />
         </div>
       </div>
 
 
-      <ProductsTable data={data.orders} columns={columns} />
+      <ProductsTable data={orders.orders} columns={columns} />
     </div>
   );
 }
