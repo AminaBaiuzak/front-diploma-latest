@@ -3,7 +3,7 @@
 import { getStoreProfile, registerUser } from "@/services/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import Loader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
 import ReviewInProfile from "@/components/ReviewInProfile";
@@ -11,6 +11,9 @@ import { deleteReview, getReviewsByStore } from "@/services/reviews";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [topReviews, setTopReviews] = useState([])
+  const [remainingReviews, setRemainingReviews] = useState([])
 
   const { data: profileData, isLoading: profileDataLoading, isError: profileDataError } = useQuery({
     queryKey: ["profile_store"],
@@ -35,8 +38,16 @@ export default function ProfilePage() {
     enabled: !!profileData,
   });
 
-  console.log("Reviews received: ", reviewsData);
-  console.log(reviewsData?.reviews.length);
+  useEffect(() => {
+    if (reviewsData !== undefined) {
+      setTopReviews(reviewsData?.reviews.slice(0, 4) || []);
+      setRemainingReviews(reviewsData?.reviews.slice(4) || []);
+    }
+  }, [reviewsData]);
+
+  const handleShowAllReviews = () => {
+    setShowAllReviews(!showAllReviews);
+  };
 
   useEffect(() => {
     if (profileDataError) {
@@ -46,15 +57,15 @@ export default function ProfilePage() {
     }
   }, [profileDataError]);
 
-  const deleteReviewByStore = useMutation({
-    mutationFn: deleteReview,
-    onSuccess: () => {
-      toast.success("Your review has been deleted");
-    },
-    onError: () => {
-      toast.error("Deletion of review failed");
-    },
-  });
+  // const deleteReviewByStore = useMutation({
+  //   mutationFn: deleteReview,
+  //   onSuccess: () => {
+  //     toast.success("Your review has been deleted");
+  //   },
+  //   onError: () => {
+  //     toast.error("Deletion of review failed");
+  //   },
+  // });
 
   const handleDelete = async (review_id) => {
     const token = localStorage.getItem("duken");
@@ -62,7 +73,18 @@ export default function ProfilePage() {
       return router.replace("/login");
     }
 
-    deleteReviewByStore.mutate({ review_id, token: JSON.parse(token).token });
+    console.log("review_id is", review_id);
+
+    try {
+      await deleteReview({ id: review_id, token: JSON.parse(token).token });
+
+      setTopReviews((prevReviews) => prevReviews.filter((review) => review.id !== review_id));
+      setRemainingReviews((prevReviews) => prevReviews.filter((review) => review.id !== review_id));
+
+      toast.success("Your review has been deleted");
+    } catch (error) {
+      toast.error("Deletion of review failed");
+    }
   };
 
   if (profileDataLoading || reviewsLoading)
@@ -147,14 +169,38 @@ export default function ProfilePage() {
             <p className="font-medium text-[14px] mt-2 px-[9px]">My Reviews</p>
 
             <div className="flex flex-col gap-[8px] my-[8px]">
-              {reviewsData?.reviews.length ? (
-                  reviewsData.reviews.slice().reverse().map((review) => (
-                      <ReviewInProfile key={review.id} review={review} role={'store'} onDelete={() => handleDelete(review.id)} />
+              {topReviews.length ? (
+                  topReviews.slice().reverse().map(review => (
+                      <ReviewInProfile key={review.id} review={review} role={'store'} onDelete={handleDelete}/>
                   ))
               ) : (
                   <p>You have not written any reviews yet</p>
               )}
+              {remainingReviews.length > 0 && !showAllReviews && (
+                  <div className="flex justify-start mt-2">
+                    <button
+                        className="text-[#367193] underline"
+                        onClick={handleShowAllReviews}
+                    >
+                      Show all reviews &rarr;
+                    </button>
+                  </div>
+              )}
+              {showAllReviews && remainingReviews.slice().reverse().map(review => (
+                  <ReviewInProfile key={review.id} review={review} role={'store'} onDelete={handleDelete}/>
+              ))}
+              {showAllReviews && (
+                  <div className="flex justify-start mt-2">
+                    <button
+                        className="text-[#367193] underline"
+                        onClick={handleShowAllReviews}
+                    >
+                      Hide reviews &rarr;
+                    </button>
+                  </div>
+              )}
             </div>
+
           </div>
 
         </div>

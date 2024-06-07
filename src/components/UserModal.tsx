@@ -19,7 +19,7 @@ const UserModal = ({ showModal, setShowModal, user, deactivateUserAccount, activ
 
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-50">
             <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg leading-6 font-medium text-[#438DB8]">User Information</h3>

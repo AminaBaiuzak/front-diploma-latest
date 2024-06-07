@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import Loader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
 import { getProfile } from "@/services/auth";
@@ -11,6 +11,7 @@ import ReviewInProfile from "@/components/ReviewInProfile";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const { data: profileData, isLoading: profileDataLoading, isError: profileDataError } = useQuery({
     queryKey: ["profile"],
@@ -37,6 +38,13 @@ export default function ProfilePage() {
 
   console.log("Reviews in distributor profile: ", reviewsData)
   console.log("Distributor data: ", profileData)
+
+  const handleShowAllReviews = () => {
+    setShowAllReviews(true);
+  };
+
+  const topReviews = reviewsData?.reviews.slice(0, 5) || [];
+  const remainingReviews = reviewsData?.reviews.slice(5) || [];
 
   useEffect(() => {
     if (profileDataError) {
@@ -103,10 +111,26 @@ export default function ProfilePage() {
           <div className={'bg-[#AEDEFC] bg-opacity-10 py-1 rounded-lg px-4'}>
             <p className="font-medium text-[14px] mt-2 px-[9px]">Customer Reviews</p>
             <div className="flex flex-col gap-[8px] my-[8px]">
-              {reviewsData?.reviews.length ?
-                  reviewsData.reviews.slice().reverse().map(review => (
+              {topReviews.length ? (
+                  topReviews.slice().reverse().map(review => (
                       <ReviewInProfile key={review.id} review={review} role={'distributor'}/>
-                  )) : (<p> You have not received any reviews yet</p>)}
+                  ))
+              ) : (
+                  <p>You have not received any reviews yet</p>
+              )}
+              {remainingReviews.length > 0 && !showAllReviews && (
+                  <div className="flex justify-start mt-2">
+                    <button
+                        className="text-[#367193] underline"
+                        onClick={handleShowAllReviews}
+                    >
+                      Show all reviews &rarr;
+                    </button>
+                  </div>
+              )}
+              {showAllReviews && remainingReviews.slice().reverse().map(review => (
+                  <ReviewInProfile key={review.id} review={review} role={'distributor'} />
+              ))}
             </div>
           </div>
 

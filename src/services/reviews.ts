@@ -34,12 +34,17 @@ const getReviewsByDistributor = async (token: string) => {
     return response.data;
 };
 
-const deleteReview = async (reviewId: string, token: string) => {
-    const response = await axios.delete(process.env.NEXT_PUBLIC_URL + `/api/store/reviews/${reviewId}`, {
+const deleteReview = async (items: {id: string, token: string}) => {
+
+    console.log("Inside deleteReview function", items.id)
+
+    const response = await axios.delete(process.env.NEXT_PUBLIC_URL + `/api/store/reviews/${items.id}`,
+        {
         headers: {
-            Authorization: "Bearer " + token,
+            Authorization: "Bearer " + items.token,
         },
     });
+    console.log("Deletion function", items.id)
     return response.data;
 };
 

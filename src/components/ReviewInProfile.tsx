@@ -10,8 +10,6 @@ export default function ReviewInProfile({ review, role, onDelete }) {
     const { distributor_id, store_id, rating, text, id } = review;
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    console.log("Review id is", id)
-
     const { data: distributorName, isLoading: distributorNameLoading, isError: distributorNameError } = useQuery({
         queryKey: ["distributor_name"],
         queryFn: () => {
@@ -34,12 +32,8 @@ export default function ReviewInProfile({ review, role, onDelete }) {
         },
     });
 
-    const handleDelete = () => {
-        setShowDeleteModal(true);
-    };
-
     const confirmDelete = () => {
-        onDelete(id);
+        onDelete(Number(id));
         setShowDeleteModal(false);
     };
 
@@ -49,7 +43,7 @@ export default function ReviewInProfile({ review, role, onDelete }) {
             {role === "store" && (
                 <button
                     className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1"
-                    onClick={handleDelete}
+                    onClick={() => setShowDeleteModal(true)}
                 >
                     <MdDelete />
                 </button>
@@ -67,15 +61,15 @@ export default function ReviewInProfile({ review, role, onDelete }) {
                 ))}
             </div>
 
-            <p className="font-outfit text-[#222831] mt-3 text-[14px] border p-3 bg-[#FEFBF6] bg-opacity-50 rounded-lg">
+            <p className="font-outfit text-[#222831] mt-1 text-[14px] border p-3 bg-[#FEFBF6] bg-opacity-50 rounded-lg">
                 {text}
             </p>
 
             {showDeleteModal && (
-                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center">
+                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-4 rounded-lg">
                         <p>Are you sure you want to delete this review?</p>
-                        <div className="flex justify-end mt-2">
+                        <div className="flex justify-center mt-2">
                             <button className="px-2 py-1 bg-red-500 text-white mr-2" onClick={confirmDelete}>
                                 Yes
                             </button>
