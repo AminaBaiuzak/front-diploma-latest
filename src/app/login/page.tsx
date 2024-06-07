@@ -82,7 +82,7 @@ export default function Login() {
         </p>
         <div className="border-b-[3px] border-[#367193]"></div>
         <p className="font-outfit font-semibold text-[22px] text-white">
-          Our platform is designed to be intuitive and easy to use, ensuring a smooth experience for all users.
+          The bridge, connecting distributors with shops, fostering efficient and beneficial partnerships.
         </p>
         <div className="border-b-[3px] border-[#367193]"></div>
         <p className="font-outfit font-semibold text-[26px] text-white">Follow us on social media and subscribe to our newsletter to stay updated</p>

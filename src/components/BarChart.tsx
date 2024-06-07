@@ -99,12 +99,14 @@ const Dashboard = () => {
         },
     });
 
+
+
     const [chartData, setChartData] = useState(null);
     const pathname = usePathname();
     const role = pathname.startsWith("/distributor") ? "distributor" : "store";
 
     useEffect(() => {
-        if (data) {
+        if (data !== undefined) {
             const monthlyData = {};
             data.orders.forEach((order) => {
                 const key = role === 'store' ? 'store_' + order.store_id : 'distributor_' + order.distributor_id;
@@ -141,7 +143,7 @@ const Dashboard = () => {
     if (isLoading) return <Loader color={"#9bb8c9"} loading={true} size={50} className="m-auto mt-7" />;
     if (isError) return null;
 
-    return chartData ? <BarChart data={chartData} role={role} /> : null;
+    return chartData?.datasets.length ? <BarChart data={chartData} role={role} /> : null;
 };
 
 export default Dashboard;

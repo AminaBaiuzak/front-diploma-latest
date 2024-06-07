@@ -73,7 +73,7 @@ export default function StatisticsPage() {
   return (
     <div className="pl-[103px] pr-[37px] pt-[30px] pb-[80px] bg-[#36719314] flex-1 flex flex-col gap-[24px]">
       <div className="h-[151px] w-[100%] bg-white rounded-[30px] flex">
-        <div className="w-[60%] h-full flex gap-3 justify-center items-center">
+        <div className="w-[50%] h-full flex gap-3 justify-center items-center">
           <div className="w-[84px] h-[84px] rounded-full bg-[#EFFFF6] flex justify-center items-center">
             <Image src="/overall.png" alt="" width={42} height={42} className="w-[42px] h-[42px]" quality={100} />
           </div>
@@ -87,7 +87,7 @@ export default function StatisticsPage() {
             {/*</div>*/}
           </div>
         </div>
-        <div className="w-[40%] h-full flex justify-center items-center">
+        <div className="w-[50%] h-full flex justify-center items-center">
           <div className="w-full border-l border-[#F0F0F0] flex gap-3 justify-center items-center">
             <div className="w-[84px] h-[84px] rounded-full bg-[#CDF4FF] flex justify-center items-center">
               <Image src="/month.png" alt="" width={42} height={42} className="w-[42px] h-[42px]" quality={100} />
