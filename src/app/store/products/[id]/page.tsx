@@ -291,16 +291,16 @@ export default function page() {
           {showReviewForm && <ReviewForm data={product} />}
 
           <p className=" font-medium text-[18px] font-outfit">Customer Reviews</p>
-          {/*<div className="flex flex-col gap-[8px] my-[8px]">*/}
-          {/*  <div className="mt-[20px]">*/}
-          {/*    {productReviews ?*/}
-          {/*        productReviews.slice().reverse().map((review: any) => (*/}
-          {/*            <Review key={review.id} review={review} />*/}
-          {/*        )) :*/}
-          {/*        <p>There are no reviews yet</p>*/}
-          {/*    }*/}
-          {/*  </div>*/}
-          {/*</div>*/}
+          <div className="flex flex-col gap-[8px] my-[8px]">
+            <div className="mt-[20px]">
+              {productReviews ?
+                  productReviews.slice().reverse().map((review: any) => (
+                      <Review key={review.id} review={review} />
+                  )) :
+                  <p>There are no reviews yet</p>
+              }
+            </div>
+          </div>
 
         </div>
 

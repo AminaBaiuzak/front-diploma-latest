@@ -2,17 +2,20 @@
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { useRef } from 'react';
+import { GoStarFill } from "react-icons/go";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const DoughnutChart = ({ rating }) => {
     const chartRef = useRef(null);
+    const value = rating * 20
 
     const data = {
         labels: ['Rating', 'Remaining'],
         datasets: [
             {
-                data: rating === 0 ? [0, 100] : [rating, 100 - rating],
+                data: value === 0 ? [0, 100] : [value, 100 - value],
                 backgroundColor: ['#8CD6AE', '#E5E5E5'],
                 hoverBackgroundColor: ['#E5E5E5', '#E5E5E5'],
                 borderWidth: 0,
@@ -51,17 +54,21 @@ const DoughnutChart = ({ rating }) => {
     return (
         <div className="bg-white px-10 py-5 rounded-[30px] shadow-md w-[400px]">
             <div className="text-center">
-                <h2 className="text-xl font-bold">Customer satisfaction</h2>
-                <p className="text-gray-600 mb-10">Shop representatives that buy products</p>
+                <div className="flex flex-col items-center justify-center">
+                    <h2 className="text-xl font-bold flex items-center justify-center">
+                        Customer satisfaction <GoStarFill size={24} color="#FFC350CC" className="ml-2" />
+                    </h2>
+                    <p className="text-gray-600 mb-10">Shop representatives that buy products</p>
+                </div>
             </div>
             <div className="relative">
                 <Doughnut ref={chartRef} data={data} options={options} className={'w-[300px]'} />
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    {rating === 0 ? (
+                    {value === 0 ? (
                         <span className="text-[20px] text-gray-600">You have not received reviews yet</span>
                     ) : (
                         <>
-                            <span className="text-[45px] font-semibold">{`${rating}%`}</span>
+                            <span className="text-[45px] font-semibold">{`${rating}/5`}</span>
                             <span className="text-[20px] text-gray-600">Average rate</span>
                         </>
                     )}

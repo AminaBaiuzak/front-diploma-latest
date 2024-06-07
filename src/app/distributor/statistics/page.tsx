@@ -17,6 +17,7 @@ import {getAverageRatingByDistributorId} from "@/services/reviews";
 
 export default function StatisticsPage() {
   const router = useRouter();
+  const [ratingData, setRatingData] = useState(0)
 
   const { data: orders, isLoading: ordersLoading, isError: ordersError } = useQuery({
     queryKey: ["statistics_store"],
@@ -30,7 +31,7 @@ export default function StatisticsPage() {
   });
 
   const { data: rating, isLoading: ratingLoading, isError:ratingError } = useQuery({
-    queryKey: ["reviews"],
+    queryKey: ["reviews_average"],
     queryFn: () => {
       const token = localStorage.getItem("duken");
       if (!token) {
@@ -39,6 +40,12 @@ export default function StatisticsPage() {
       return getAverageRatingByDistributorId(JSON.parse(token).token);
     },
   });
+
+  useEffect(() => {
+    if (rating !== undefined){
+      setRatingData(rating)
+    }
+  }, [rating])
 
   console.log("✌️data.orders for distributor for bar chart and the table --->", orders)
 
@@ -49,6 +56,10 @@ export default function StatisticsPage() {
       toast.error("An error occurred. Please log in.");
     }
   }, [ordersError]);
+
+  const handleProductPage = (product_id) => {
+    router.push(`/distributor/my-stock/${product_id}`)
+  }
 
   const columns = useMemo<ColumnDef<IProductSell>[]>(
     () => [
@@ -82,21 +93,21 @@ export default function StatisticsPage() {
   return (
     <div className="pl-[103px] pr-[37px] pt-[30px] pb-[80px] bg-[#36719314] flex-1 flex flex-col gap-[24px]">
       <div className="h-[151px] w-[100%] bg-white rounded-[30px] flex">
-        <div className="w-[60%] h-full flex gap-3 justify-center items-center">
+        <div className="w-[50%] h-full flex gap-3 justify-center items-center">
           <div className="w-[84px] h-[84px] rounded-full bg-[#EFFFF6] flex justify-center items-center">
             <Image src="/overall.png" alt="" width={42} height={42} className="w-[42px] h-[42px]" quality={100} />
           </div>
           <div>
             <p className=" font-montserrat text-sm text-[#ACACAC]">Sold (overall)</p>
             <p className=" font-outfit font-semibold text-[32px] text-main">${orders.sold_overall.toFixed(2)}</p>
-            <div className="flex items-center gap-1">
-              <IoArrowUpOutline size={15} color="#00AC4F" />
-              <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>
-              <span className=" text-xs text-main font-outfit ">this year</span>
-            </div>
+            {/*<div className="flex items-center gap-1">*/}
+            {/*  <IoArrowUpOutline size={15} color="#00AC4F" />*/}
+            {/*  <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>*/}
+            {/*  <span className=" text-xs text-main font-outfit ">this year</span>*/}
+            {/*</div>*/}
           </div>
         </div>
-        <div className="w-[40%] h-full flex justify-center items-center">
+        <div className="w-[50%] h-full flex justify-center items-center">
           <div className="w-full border-l border-[#F0F0F0] flex gap-3 justify-center items-center">
             <div className="w-[84px] h-[84px] rounded-full bg-[#CDF4FF] flex justify-center items-center">
               <Image src="/month.png" alt="" width={42} height={42} className="w-[42px] h-[42px]" quality={100} />
@@ -104,27 +115,30 @@ export default function StatisticsPage() {
             <div>
               <p className=" font-montserrat text-sm text-[#ACACAC]">Sold in month</p>
               <p className=" font-outfit font-semibold text-[32px] text-main">${orders.sold_in_month.toFixed(2)}</p>
-              <div className="flex items-center gap-1">
-                <IoArrowDownOutline size={15} color="#D0004B" />
-                <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>
-                <span className=" text-xs text-main font-outfit ">this month</span>
-              </div>
+              {/*<div className="flex items-center gap-1">*/}
+              {/*  <IoArrowDownOutline size={15} color="#D0004B" />*/}
+              {/*  <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>*/}
+              {/*  <span className=" text-xs text-main font-outfit ">this month</span>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-around gap-[15px]">
+      <div className="flex justify-center gap-[30px]">
+
         <div className="w-[880px]">
           <BarChart />
         </div>
+
         <div className="w-[400]">
-          <DoughnutChart rating={rating} />
+          <DoughnutChart rating={ratingData} />
         </div>
+
       </div>
 
 
-      <ProductsTable data={orders.orders} columns={columns} />
+      <ProductsTable data={orders.orders} columns={columns} openProduct={handleProductPage}/>
     </div>
   );
 }

@@ -1,22 +1,29 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
 import Loader from "react-spinners/PuffLoader";
 import {GoStar, GoStarFill} from "react-icons/go";
 import {getStoreUserWithoutToken} from "@/services/auth";
+import {useEffect, useState} from "react";
 
 const Review = ({ review }) => {
 
+    const [storeName, setStoreName] = useState('Sample Store')
+
     const { data: storeData, isLoading: storeLoading, isError: storeError } = useQuery({
-        queryKey: ["profile_store"],
+        queryKey: ["profile_store_name"],
         queryFn: () => {
             const token = localStorage.getItem("duken");
             if (!token) {
                 throw new Error("No token found");
             }
-            return getStoreUserWithoutToken(JSON.parse(token).token);
+            return getStoreUserWithoutToken(review.store_id);
         },
     });
+
+    useEffect(() => {
+        if (storeData !== undefined){
+            setStoreName(String(storeData))
+        }
+    })
 
     if (storeLoading) return <Loader color={"#367193"} loading={true} size={50} className="m-auto mt-7" />;
     if (storeError) return <p>An error occurred while loading reviews.</p>;
@@ -27,7 +34,7 @@ const Review = ({ review }) => {
 
                 <div className={'flex'}>
                     <p>By &nbsp; </p>
-                    <p className="font-bold"> {storeData}</p>
+                    <p className="font-bold">{storeName}</p>
                 </div>
 
                 <div className="flex gap-[5px] mt-2">

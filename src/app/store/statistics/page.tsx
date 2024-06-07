@@ -35,6 +35,10 @@ export default function StatisticsPage() {
     }
   }, [isError]);
 
+  const handleProductPage = (product_id) => {
+    router.push(`/store/products/${product_id}`)
+  }
+
   const columns = useMemo<ColumnDef<IProductSell>[]>(
     () => [
       {
@@ -76,11 +80,11 @@ export default function StatisticsPage() {
           <div>
             <p className=" font-montserrat text-sm text-[#ACACAC]">Spent (overall)</p>
             <p className=" font-outfit font-semibold text-[32px] text-main">${data.spent_overall}</p>
-            <div className="flex items-center gap-1">
-              <IoArrowUpOutline size={15} color="#00AC4F" />
-              <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>
-              <span className=" text-xs text-main font-outfit ">this year</span>
-            </div>
+            {/*<div className="flex items-center gap-1">*/}
+            {/*  <IoArrowUpOutline size={15} color="#00AC4F" />*/}
+            {/*  <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>*/}
+            {/*  <span className=" text-xs text-main font-outfit ">this year</span>*/}
+            {/*</div>*/}
           </div>
         </div>
         <div className="w-[40%] h-full flex justify-center items-center">
@@ -91,11 +95,11 @@ export default function StatisticsPage() {
             <div>
               <p className=" font-montserrat text-sm text-[#ACACAC]">Spent in month</p>
               <p className=" font-outfit font-semibold text-[32px] text-main">${data.spent_in_month}</p>
-              <div className="flex items-center gap-1">
-                <IoArrowDownOutline size={15} color="#D0004B" />
-                <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>
-                <span className=" text-xs text-main font-outfit ">this month</span>
-              </div>
+              {/*<div className="flex items-center gap-1">*/}
+              {/*  <IoArrowDownOutline size={15} color="#D0004B" />*/}
+              {/*  <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>*/}
+              {/*  <span className=" text-xs text-main font-outfit ">this month</span>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>
@@ -105,7 +109,7 @@ export default function StatisticsPage() {
         <BarChart/>
       </div>
 
-      <ProductsTable data={data.orders} columns={columns} />
+      <ProductsTable data={data.orders} columns={columns} openProduct={handleProductPage}/>
     </div>
   );
 }

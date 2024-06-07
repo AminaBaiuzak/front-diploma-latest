@@ -24,7 +24,7 @@ export default function ProfilePage() {
   });
 
   const { data: reviewsData, isLoading: reviewsLoading, isError: reviewsError } = useQuery({
-    queryKey: ["reviews"],
+    queryKey: ["reviews_store"],
     queryFn: () => {
       const token = localStorage.getItem("duken");
       if (!token) {
@@ -142,17 +142,21 @@ export default function ProfilePage() {
               {profileData.store.details && profileData.store.details !== " " ? profileData.store.details : "Please add company details"}
             </p>
           </div>
-          <p className="font-medium text-[14px] mt-5 px-[9px]">My Reviews</p>
 
-          <div className="flex flex-col gap-[8px] my-[8px]">
-            {reviewsData?.reviews.length ? (
-                reviewsData.reviews.map((review) => (
-                    <ReviewInProfile key={review.id} review={review} role={'store'} onDelete={() => handleDelete(review.id)} />
-                ))
-            ) : (
-                <p>You have not written any reviews yet</p>
-            )}
+          <div className={'bg-[#FFC350] bg-opacity-10 py-1 rounded-lg px-4'}>
+            <p className="font-medium text-[14px] mt-2 px-[9px]">My Reviews</p>
+
+            <div className="flex flex-col gap-[8px] my-[8px]">
+              {reviewsData?.reviews.length ? (
+                  reviewsData.reviews.slice().reverse().map((review) => (
+                      <ReviewInProfile key={review.id} review={review} role={'store'} onDelete={() => handleDelete(review.id)} />
+                  ))
+              ) : (
+                  <p>You have not written any reviews yet</p>
+              )}
+            </div>
           </div>
+
         </div>
       </div>
   );

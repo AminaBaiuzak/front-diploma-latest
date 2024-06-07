@@ -3,7 +3,7 @@ import { useState } from "react";
 import { IProductSell } from "@/types/product";
 import { usePathname } from "next/navigation";
 
-export default function ProductsTable({ data, columns }: { data: IProductSell[]; columns: ColumnDef<IProductSell>[] }) {
+export default function ProductsTable({ data, columns, openProduct  }: { data: IProductSell[]; columns: ColumnDef<IProductSell>[]; openProduct: (product_id: number) => void }) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 4,
@@ -67,7 +67,7 @@ export default function ProductsTable({ data, columns }: { data: IProductSell[];
                 <tbody className="w-full pt-5">
                 {table.getRowModel().rows.map((row) => {
                   return (
-                      <tr key={row.id} className="w-full ">
+                      <tr key={row.id} className="w-full" onClick={() => openProduct(row.original.product_id)}>
                         {row.getVisibleCells().map((cell, index) => {
                           return (
                               <td

@@ -44,7 +44,8 @@ export default function ReviewInProfile({ review, role, onDelete }) {
     };
 
     return (
-        <div className="w-full rounded-[7px] border border-[#CECECE] pt-[5px] pb-[20px] px-[10px] relative">
+        <div className="w-full rounded-[7px] border border-[#222831] border-opacity-20 pt-[5px] pb-[10px] px-[10px] relative">
+
             {role === "store" && (
                 <button
                     className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1"
@@ -53,7 +54,9 @@ export default function ReviewInProfile({ review, role, onDelete }) {
                     <MdDelete />
                 </button>
             )}
+
             <p className="text-[#413B89] text-[14px] font-outfit font-medium">{role === 'store' ? `For ${distributorName}` : `${storeName}`}</p>
+
             <div className="flex gap-[4px] mt-1">
                 {Array(5).fill(0).map((_, index) => (
                     <GoStarFill
@@ -63,9 +66,11 @@ export default function ReviewInProfile({ review, role, onDelete }) {
                     />
                 ))}
             </div>
-            <p className="font-outfit text-[#49454FCC] mt-3 text-[14px] border p-3">
+
+            <p className="font-outfit text-[#222831] mt-3 text-[14px] border p-3 bg-[#FEFBF6] bg-opacity-50 rounded-lg">
                 {text}
             </p>
+
             {showDeleteModal && (
                 <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-4 rounded-lg">

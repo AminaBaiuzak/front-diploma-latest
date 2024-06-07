@@ -61,16 +61,17 @@ const getReviewsByProductIdForDistributor = async (productId: string, token: str
     return response.data;
 };
 
-const getAverageRatingByDistributorId = async ( token: string) => {
-    const reviews = await getReviewsByDistributor(token);
-    console.log(reviews)
+const getAverageRatingByDistributorId = async (token: string) => {
+    const reviewsData = await getReviewsByDistributor(token);
 
-    if (reviews.length === 0) {
-        return 0;
-    }
+    console.log("from getAverageRatingByDistributorId", reviewsData.reviews);
 
-    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return totalRating / reviews.length;
+    const totalRating = reviewsData.reviews.reduce((acc, review) => acc + review.rating, 0);
+    const averageRating = totalRating / reviewsData.reviews.length;
+
+    console.log(averageRating)
+
+    return averageRating;
 };
 
 export

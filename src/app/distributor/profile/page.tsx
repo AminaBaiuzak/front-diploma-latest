@@ -53,8 +53,7 @@ export default function ProfilePage() {
 
   return (
       <div className="pl-[110px] pr-[76px] pt-[30px] pb-[80px] bg-[#36719314] w-full flex gap-[7px]">
-        <div className="bg-white w-[50%] h-full rounded-lg pl-[30px] pr-[50px] border border-[#EBEBEE] shadow-md pt-[13px]"
-             style={{"padding-bottom": "20px"}}>
+        <div className="bg-white w-[50%] h-full rounded-lg pl-[30px] pr-[50px] border border-[#EBEBEE] shadow-md pt-[13px]">
           <div className=" rounded-full w-[104px] h-[104px] flex justify-center items-center overflow-hidden">
             <img src={profileData.distributor.img_url ? profileData.distributor.img_url : "/profile_avatar.png"} alt="" className="w-[100px] h-[100px] object-cover" />
           </div>
@@ -101,13 +100,16 @@ export default function ProfilePage() {
             <p className="text-[15px] mt-3 break-words border p-3 rounded-[7px]">{(profileData.distributor.details && profileData.distributor.details !== " ") ? profileData.distributor.details : "Please add company details"}</p>
           </div>
 
-          <p className="font-medium text-[14px] mt-5 px-[9px]">Customer Reviews</p>
-          <div className="flex flex-col gap-[8px] my-[8px]">
-            {reviewsData?.reviews.length ?
-                reviewsData.reviews.map(review => (
-                <ReviewInProfile key={review.id} review={review} role={'distributor'}/>
-            )) : (<p> You have not received any reviews yet</p>)}
+          <div className={'bg-[#AEDEFC] bg-opacity-10 py-1 rounded-lg px-4'}>
+            <p className="font-medium text-[14px] mt-2 px-[9px]">Customer Reviews</p>
+            <div className="flex flex-col gap-[8px] my-[8px]">
+              {reviewsData?.reviews.length ?
+                  reviewsData.reviews.slice().reverse().map(review => (
+                      <ReviewInProfile key={review.id} review={review} role={'distributor'}/>
+                  )) : (<p> You have not received any reviews yet</p>)}
+            </div>
           </div>
+
         </div>
       </div>
   );

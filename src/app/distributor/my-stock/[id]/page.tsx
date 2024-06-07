@@ -160,7 +160,7 @@ export default function page() {
               <span className=" uppercase text-white">{product.product.category}</span>
             </div>
             <div className="pt-[21px] px-[15px] pb-[32px] mb-[38px] border rounded-[10px] border-black">
-              <p className=" font-outfit text-[12px]">{product.product.product_description}</p>
+              <p className=" font-outfit text-[18px]">{product.product.product_description}</p>
             </div>
             <div className="border rounded-[10px] border-black py-[9px] flex items-center">
               <span className=" font-montserrat font-bold text-[26px] text-[#3A4980] ml-4 mr-5">{product.product.price} {'\u20B8'}</span>
@@ -184,16 +184,16 @@ export default function page() {
 
         <div>
           <p className=" font-medium text-[18px] font-outfit mt-2">Customer Reviews</p>
-          {/*<div className="flex flex-col gap-[8px] my-[8px]">*/}
-          {/*  <div className="mt-[1px]">*/}
-          {/*    {productReviews ?*/}
-          {/*        productReviews.slice().reverse().map((review: any) => (*/}
-          {/*            <Review key={review.id} review={review} />*/}
-          {/*        )) :*/}
-          {/*        <p>There are no reviews yet</p>*/}
-          {/*    }*/}
-          {/*  </div>*/}
-          {/*</div>*/}
+          <div className="flex flex-col gap-[8px] my-[8px]">
+            <div className="mt-[1px]">
+              {productReviews ?
+                  productReviews.slice().reverse().map((review: any) => (
+                      <Review key={review.id} review={review} />
+                  )) :
+                  <p>There are no reviews yet</p>
+              }
+            </div>
+          </div>
         </div>
 
         <div

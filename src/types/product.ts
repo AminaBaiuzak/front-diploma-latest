@@ -32,5 +32,6 @@ export type IProductSell = {
   quantity: number;
   order_id: number;
   subRows?: IProductSell[];
-  total?: number;
+  total_price?: number;
+  product_id?: string;
 };
