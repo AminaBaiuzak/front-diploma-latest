@@ -35,7 +35,7 @@ export default function page() {
   });
 
   const {data: reviewData, isLoading: reviewDataLoading, isError: reviewDataError } = useQuery({
-    queryKey: ["reviewData_for_product_distributor"],
+    queryKey: ["reviewData_for_product_distributor", id],
     queryFn: () => {
       const token = localStorage.getItem("duken");
       if (!token) {

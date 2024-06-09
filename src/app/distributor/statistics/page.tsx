@@ -20,7 +20,7 @@ export default function StatisticsPage() {
   const [ratingData, setRatingData] = useState(0)
 
   const { data: orders, isLoading: ordersLoading, isError: ordersError } = useQuery({
-    queryKey: ["statistics_store"],
+    queryKey: ["statistics_distributor"],
     queryFn: () => {
       const token = localStorage.getItem("duken");
       if (!token) {
