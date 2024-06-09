@@ -37,8 +37,12 @@ export default function Login() {
         router.replace("/admin");
       }
     },
-    onError: () => {
-      toast.error("Invalid email or password. Please try again.");
+    onError: (error) => {
+      if (error.response.status === 403) {
+        toast.warning("This account is inactive. Please try again later");
+      } else {
+        toast.error("Invalid email or password. Please try again.");
+      }
     },
   });
 

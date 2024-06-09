@@ -99,7 +99,7 @@ export default function StatisticsPage() {
           </div>
           <div>
             <p className=" font-montserrat text-sm text-[#ACACAC]">Sold (overall)</p>
-            <p className=" font-outfit font-semibold text-[32px] text-main">${orders.sold_overall.toFixed(2)}</p>
+            <p className=" font-outfit font-semibold text-[32px] text-main">{orders.sold_overall.toFixed(2)} ₸</p>
             {/*<div className="flex items-center gap-1">*/}
             {/*  <IoArrowUpOutline size={15} color="#00AC4F" />*/}
             {/*  <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>*/}
@@ -114,7 +114,7 @@ export default function StatisticsPage() {
             </div>
             <div>
               <p className=" font-montserrat text-sm text-[#ACACAC]">Sold in month</p>
-              <p className=" font-outfit font-semibold text-[32px] text-main">${orders.sold_in_month.toFixed(2)}</p>
+              <p className=" font-outfit font-semibold text-[32px] text-main">{orders.sold_in_month.toFixed(2)} ₸</p>
               {/*<div className="flex items-center gap-1">*/}
               {/*  <IoArrowDownOutline size={15} color="#D0004B" />*/}
               {/*  <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>*/}
@@ -132,7 +132,10 @@ export default function StatisticsPage() {
         </div>
 
         <div className="w-[400]">
-          <DoughnutChart rating={ratingData} />
+          {ratingData ?
+              (<DoughnutChart rating={ratingData}/>)
+          :
+          null}
         </div>
 
       </div>

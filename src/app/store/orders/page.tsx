@@ -67,10 +67,10 @@ export default function OrdersPage() {
         enableSorting: false,
       },
       {
-        accessorKey: "product.product_name",
-        header: () => <span>Product Name</span>,
-        enableSorting: false,
-        filterFn: "includesString",
+          accessorKey: "product.product_name",
+          header: () => <span>Product Name</span>,
+          enableSorting: false,
+          filterFn: "includesString",
       },
       {
         accessorKey: "total_price",

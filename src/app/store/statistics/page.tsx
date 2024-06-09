@@ -29,8 +29,8 @@ export default function StatisticsPage() {
 
   useEffect(() => {
     if (isError) {
-      localStorage.removeItem("duken");
       router.replace("/login");
+      localStorage.removeItem("duken");
       toast.error("An error occurred. Please log in.");
     }
   }, [isError]);
@@ -79,7 +79,7 @@ export default function StatisticsPage() {
           </div>
           <div>
             <p className=" font-montserrat text-sm text-[#ACACAC]">Spent (overall)</p>
-            <p className=" font-outfit font-semibold text-[32px] text-main">${data.spent_overall}</p>
+            <p className=" font-outfit font-semibold text-[32px] text-main">{data.spent_overall} ₸</p>
             {/*<div className="flex items-center gap-1">*/}
             {/*  <IoArrowUpOutline size={15} color="#00AC4F" />*/}
             {/*  <span className=" text-xs text-[#00AC4F] font-outfit font-bold">37.8%</span>*/}
@@ -94,7 +94,7 @@ export default function StatisticsPage() {
             </div>
             <div>
               <p className=" font-montserrat text-sm text-[#ACACAC]">Spent in month</p>
-              <p className=" font-outfit font-semibold text-[32px] text-main">${data.spent_in_month}</p>
+              <p className=" font-outfit font-semibold text-[32px] text-main">{data.spent_in_month} ₸</p>
               {/*<div className="flex items-center gap-1">*/}
               {/*  <IoArrowDownOutline size={15} color="#D0004B" />*/}
               {/*  <span className=" text-xs text-[#D0004B] font-outfit font-bold">2%</span>*/}

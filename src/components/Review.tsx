@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import Loader from "react-spinners/PuffLoader";
 import {GoStar, GoStarFill} from "react-icons/go";
-import {getStoreUserWithoutToken} from "@/services/auth";
-import {useEffect, useState} from "react";
+import { getStoreUser } from "@/services/auth";
+import { useEffect, useState } from "react";
 
 const Review = ({ review }) => {
-
     const [storeName, setStoreName] = useState('Sample Store')
 
     const { data: storeData, isLoading: storeLoading, isError: storeError } = useQuery({
@@ -15,7 +14,8 @@ const Review = ({ review }) => {
             if (!token) {
                 throw new Error("No token found");
             }
-            return getStoreUserWithoutToken(review.store_id);
+
+            return getStoreUser(review.store_id);
         },
     });
 

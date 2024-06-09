@@ -142,23 +142,20 @@ const getUsers = async (token: string) => {
   return response.data;
 };
 
-const getDistributorUserWithoutToken = async (id: string) => {
-  // const response = await axios.get(
-  //     process.env.NEXT_PUBLIC_URL + `/api/distributor/user/${id}`,
-  // );
-  // return response.data;
+const getDistributorUser = async ( id ) => {
+  const response = await axios.get(
+      process.env.NEXT_PUBLIC_URL + `/api/distributor/user/${id}`,
+  );
+  return response.data?.user?.company_name;
+}
 
-  return `${id} My distributor Inc.`
-};
+const getStoreUser = async ( id ) => {
+  const response = await axios.get(
+      process.env.NEXT_PUBLIC_URL + `/api/store/user/${id}`,
+  );
+  return response.data?.user?.company_name || id;
+}
 
-const getStoreUserWithoutToken = async (id: string) => {
-  // const response = await axios.get(
-  //     process.env.NEXT_PUBLIC_URL + `/api/store/user/${id}`,
-  // );
-  // return response.data;
-
-  return `${id} My store Inc.`
-};
 
 const deactivateUserByAdmin = async (items: { token: string, id: string }) => {
   const response = await axios.post(
@@ -201,6 +198,6 @@ export {
   getUsers,
   deactivateUserByAdmin,
   activateUserByAdmin,
-  getDistributorUserWithoutToken,
-  getStoreUserWithoutToken,
+  getDistributorUser,
+  getStoreUser,
 };

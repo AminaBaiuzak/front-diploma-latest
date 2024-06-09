@@ -4,33 +4,35 @@ import { useState } from "react";
 import { GoStarFill } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
 import {useQuery} from "@tanstack/react-query";
-import {getDistributorUserWithoutToken, getStoreUserWithoutToken} from "@/services/auth";
+import {getDistributorUser, getStoreUser} from "@/services/auth";
 
 export default function ReviewInProfile({ review, role, onDelete }) {
     const { distributor_id, store_id, rating, text, id } = review;
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const { data: distributorName, isLoading: distributorNameLoading, isError: distributorNameError } = useQuery({
-        queryKey: ["distributor_name"],
+        queryKey: ["distributor_name", distributor_id],
         queryFn: () => {
             const token = localStorage.getItem("duken");
             if (!token) {
                 throw new Error("No token found");
             }
-            return getDistributorUserWithoutToken(distributor_id);
+            return getDistributorUser(distributor_id);
         },
     });
 
     const { data: storeName, isLoading: storeNameLoading, isError: storeNameError } = useQuery({
-        queryKey: ["store_name"],
+        queryKey: ["store_name", store_id],
         queryFn: () => {
             const token = localStorage.getItem("duken");
             if (!token) {
                 throw new Error("No token found");
             }
-            return getStoreUserWithoutToken(store_id);
+            return getStoreUser(store_id);
         },
     });
+
+    console.log(storeName, store_id)
 
     const confirmDelete = () => {
         onDelete(Number(id));

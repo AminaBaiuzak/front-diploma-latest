@@ -22,14 +22,20 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
     pageSize: 4,
   });
 
+  const [columnVisibility, setColumnVisibility] = useState({
+    category: false,
+  });
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  console.log(data)
 
   const table = useReactTable({
     columns,
     data,
+    initialState: { columnVisibility },
+    filterFns: {},
     debugTable: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -42,9 +48,7 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     getFilteredRowModel: getFilteredRowModel(),
-    // onColumnFiltersChange: (filters) => {
-    //   setColumnFilters([...filters, { id: "category", value: selectedCategory }]);
-    // },
+    onColumnFiltersChange: setColumnFilters,
   });
 
   const pathname: string = usePathname();
@@ -60,7 +64,7 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
   return (
       <div className="w-full bg-white rounded-[30px] py-[22px] pl-[22px] pr-[70px]">
         <div className="flex justify-between w-full mb-[15px]">
-          <p className=" font-montserrat font-semibold text-[22px] text-main">My Items</p>
+          <p className=" font-montserrat font-semibold text-[22px] text-main">{role === 'distributor' ? 'My Items' : 'Products' }</p>
           {role === "distributor" && (
               <div
                   className="rounded-[10px] bg-[#00AC4F99] px-[30px] py-2 flex items-center justify-center gap-2 cursor-pointer"
@@ -72,7 +76,7 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
           )}
           {role === "store" && (
               <div className="flex gap-[8px]">
-                <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
+                <div className="w-[300px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
                   <IoSearch size={24} color="#7E7E7E" />
                   <input
                       type="text"
@@ -97,7 +101,7 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                   />
 
                 </div>
-                <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
+                <div className="w-[240px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
                   <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Sort by Price:</span>
                   <select
                       name="select"
@@ -113,20 +117,40 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                     <option value="high_to_low">High to low</option>
                   </select>
                 </div>
-                <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
+
+                <div className="w-[240px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
                   <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Category:</span>
                   <select
                       name="selectCategory"
                       className="flex-1 bg-[#F9FBFF] h-full text-[14px] font-outfit"
                       onChange={(e) => {
-                        setSelectedCategory(e.target.value);
+                          const value = e.target.value;
+                          table.setColumnFilters((filters) => {
+                            if (!Array.isArray(filters)) {
+                              filters = [];
+                            }
+                            const updatedFilters = filters.filter((f) => f.id !== "category");
+                            if (value !== "") {
+                              updatedFilters.push({
+                                id: "category",
+                                value: value,
+                              });
+                            }
+                            return updatedFilters;
+                          });
+
                       }}
                   >
                     <option value="">All</option>
-                    <option value="fruits">Fruits</option>
-                    <option value="vegetables">Vegetables</option>
-                    <option value="canned food">Canned Food</option>
-                    <option value="dairy">Dairy</option>
+                    <option value={"drinks"}>Drinks</option>
+                    <option value={"vegetables"}>Vegetables</option>
+                    <option value={"fruits"}>Fruits</option>
+                    <option value={"meat"}>Meat</option>
+                    <option value={"dairy"}>Dairy</option>
+                    <option value={"snacks"}>Snacks</option>
+                    <option value={"sauces"}>Sauces</option>
+                    <option value={"tea"}>Tea</option>
+                    <option value={"canned food"}>Canned food</option>
                   </select>
                 </div>
               </div>
@@ -149,7 +173,7 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                             >
                               <div
                                   style={{
-                                    textAlign: header.id === "ImgURLs[0]" || header.id === "product_name" ? "left" : "right",
+                                    textAlign: header.id === "ImgURLs[0]" || header.id === "product_name" || header.id === "price" ? "left" : "right",
                                     paddingLeft: header.id === "product_name" ? 10 : 0,
                                   }}
                               >
@@ -194,15 +218,15 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
                                         style={{
                                           fontSize: index === 1 ? 18 : 16,
                                           fontWeight: index === 1 ? 600 : index === 3 ? 600 : 400,
-                                          textAlign: index === 0 || index === 1 ? "left" : "right",
+                                          textAlign: index === 0 || index === 1 || index === 2 ? "left" : "right",
                                           paddingLeft: index === 1 ? 10 : 0,
                                           cursor: index === 1 ? "pointer" : "default",
                                         }}
                                         onClick={index === 1 ? () => productDetails(cell.row.original.id.toString()) : undefined}
                                     >
                                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                      {index === 2 && " ₸"}
-                                      {index === 3 && " in stock"}
+                                      {index === 3 && " ₸"}
+                                      {index === 4 && " in stock"}
                                     </p>
                                 )}
                               </td>

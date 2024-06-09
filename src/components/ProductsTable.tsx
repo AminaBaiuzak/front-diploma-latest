@@ -23,7 +23,7 @@ export default function ProductsTable({ data, columns, openProduct  }: { data: I
 
   const table = useReactTable({
     columns,
-    data: groupedData, // Use the grouped data
+    data: groupedData,
     debugTable: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

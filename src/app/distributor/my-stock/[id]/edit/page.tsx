@@ -246,11 +246,10 @@ export default function NewItemPage() {
             className="text-main text-lg p-[14px] border border-[#42506666] rounded-[8px] w-[50%]"
           >
             <option value={""}></option>
+            <option value={"drinks"}>Drinks</option>
             <option value={"vegetables"}>Vegetables</option>
             <option value={"fruits"}>Fruits</option>
-            <option value={"dried fruits"}>Dried fruits</option>
             <option value={"meat"}>Meat</option>
-            <option value={"beverages"}>MeaBeveragest</option>
             <option value={"dairy"}>Dairy</option>
             <option value={"snacks"}>Snacks</option>
             <option value={"sauces"}>Sauces</option>

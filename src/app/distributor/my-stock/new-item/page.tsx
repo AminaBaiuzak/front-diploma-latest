@@ -180,6 +180,7 @@ export default function NewItemPage() {
           >
             <option value={""}></option>
             <option value={"vegetables"}>Vegetables</option>
+            <option value={"drinks"}>Drinks</option>
             <option value={"fruits"}>Fruits</option>
             <option value={"dried fruits"}>Dried fruits</option>
             <option value={"meat"}>Meat</option>

@@ -27,6 +27,12 @@ export default function ProductsPage() {
           filterFn: "includesString",
       },
       {
+        accessorKey: "category",
+        header: () => <span>Category</span>,
+        enableSorting: false,
+        filterFn: "includesString",
+      },
+      {
         accessorKey: "price",
         header: () => <span>Price</span>,
           sortingFn: (rowA, rowB) => rowA.original.price - rowB.original.price,
@@ -36,7 +42,6 @@ export default function ProductsPage() {
         accessorKey: "stock",
         header: () => <span>Available quantity</span>,
           enableSorting: false,
-
       },
     ],
     []

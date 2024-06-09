@@ -68,7 +68,11 @@ const DoughnutChart = ({ rating }) => {
                         <span className="text-[20px] text-gray-600">You have not received reviews yet</span>
                     ) : (
                         <>
-                            <span className="text-[45px] font-semibold">{`${rating}/5`}</span>
+                            <span className="text-[45px] font-semibold border-b">
+                                {rating.toFixed(2)}
+                                <span className="text-[45px] font-semibold text-[#7D7C7C]">/</span>
+                                5
+                            </span>
                             <span className="text-[20px] text-gray-600">Average rate</span>
                         </>
                     )}

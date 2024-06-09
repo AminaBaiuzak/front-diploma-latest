@@ -306,31 +306,31 @@ export default function page() {
 
 
         <ReactModal
-          isOpen={modal}
-          onRequestClose={() => setModal(false)}
-          ariaHideApp={false}
-          style={{
-            content: {
-              width: "60%",
-              height: "fit-content",
-              borderRadius: "20px",
-              border: "1px solid #00000073",
-              backgroundColor: "white",
-              top: "25%",
-              left: "25%",
-            },
-          }}
+            isOpen={modal}
+            onRequestClose={() => setModal(false)}
+            ariaHideApp={false}
+            style={{
+              content: {
+                width: "60%",
+                height: "fit-content",
+                borderRadius: "20px",
+                border: "1px solid #00000073",
+                backgroundColor: "white",
+                top: "25%",
+                left: "25%",
+              },
+            }}
         >
           <div className="w-full h-full flex flex-col items-center">
             <div className=" w-fit py-[11px] px-[47px] mb-[26px] font-montserrat font-semibold rounded-[10px] text-white bg-[#66CD88] text-[20px] flex justify-center items-center">
               <span>This product was added to your cart</span>
             </div>
-            <div className=" w-[60%] rounded-[10px] border-[0.5px] border-[#00000080] flex">
+            <div className=" w-[60%] rounded-[10px] border-[0.5px] border-[#00000080] flex gap-4">
               <img
-                src={product.product.ImgURLs !== null && product.product.ImgURLs.length > 0 ? product.product.ImgURLs[0] : "/3d_1.png"}
-                alt="image"
-                style={{objectPosition: "center", height: "100%", width: "50%" }}
-                className={'object-contain'}
+                  src={product.product.ImgURLs !== null && product.product.ImgURLs.length > 0 ? product.product.ImgURLs[0] : "/3d_1.png"}
+                  alt="image"
+                  style={{ objectFit: "contain", objectPosition: "center", height: "auto", width: "50%" }}
+                  className="rounded-[10px]"
               />
               <div className="flex flex-col pap-[10px] justify-center">
                 <span className="text-[26px] font-semibold font-montserrat ">{product.product.product_name}</span>

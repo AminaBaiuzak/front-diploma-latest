@@ -12,6 +12,7 @@ export type Order = {
     stage: string;
     status: string;
   };
+  timestamp?: string
   subRows?: Order[];
 };
 

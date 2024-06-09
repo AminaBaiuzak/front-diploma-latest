@@ -20,12 +20,22 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoCheckmark, IoCloseOutline, IoSearch } from "react-icons/io5";
 import { toast } from "react-toastify";
+import OrderModal from "@/components/OrderModal";
 
 export default function OrdersTable({ data, columns }: { data: Order[]; columns: ColumnDef<Order>[] }) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
   });
+
+  const [columnVisibility, setColumnVisibility] = useState({
+    timestamp: false,
+  });
+
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrderForCancel, setSelectedOrderForCancel] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
 
   console.log(data);
 
@@ -39,10 +49,12 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [filter, setFilter] = useState<ColumnFiltersState>();
 
   const table = useReactTable({
     columns,
     data,
+    initialState: { columnVisibility },
     debugTable: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -117,10 +129,35 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
   const updateStatusStoreFn = (id: number) => {
     const token = localStorage.getItem("duken");
     if (!token) {
-      return router.replace("/login");
       toast.error("An error occurred. Please log in.");
+      return router.replace("/login");
     }
     updateStore.mutate({ token: JSON.parse(token).token, id: id.toString() });
+  };
+
+  const openOrderModal = (order) => {
+    setSelectedOrder(order);
+  };
+
+  const closeOrderModal = () => {
+    setSelectedOrder(null);
+  };
+
+  const handleCancelClick = (order_id) => {
+    setSelectedOrderForCancel(order_id);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedOrderForCancel(null);
+  };
+
+  const handleConfirmCancel = () => {
+    if (role === "store") {
+      updateStatusStoreFn(selectedOrderForCancel);
+      handleModalClose();
+    }
   };
 
   const pathname: string = usePathname();
@@ -128,39 +165,85 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
 
   return (
     <div className="w-full bg-white rounded-[30px] py-[22px] pl-[22px] pr-[70px]">
-      <div className="flex justify-between w-full mb-[15px]">
-        <p className=" font-montserrat font-semibold text-[22px] text-main ">Product Sell</p>
+      <div className="flex justify-between w-full mb-[30px]">
+        <p className=" font-montserrat font-semibold text-[22px] text-main ">{role === 'distributor' ? 'Product Sell' : 'My Orders'}</p>
         <div className="flex gap-[8px]">
-          <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
+          <div className="w-[380px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
             <IoSearch size={24} color="#7E7E7E" />
             <input
-              type="text"
-              placeholder="Search"
-              className="placeholder-[#B5B7C0] bg-transparent text-[14px] font-outfit w-full outline-none ml-[8px]"
-              onChange={(e) => {
-                table.setColumnFilters(() => [
-                  {
-                    id: "product[product_name]",
-                    value: e.target.value,
-                  },
-                ]);
-              }}
+                type="text"
+                placeholder="Search"
+                className="placeholder-[#B5B7C0] bg-transparent text-[14px] font-outfit w-full outline-none ml-[8px]"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  table.setColumnFilters((filters) => {
+                    if (!Array.isArray(filters)) {
+                      filters = [];
+                    }
+                    const updatedFilters = filters.filter((f) => f.id !== "product_product_name");
+                    if (value !== "") {
+                      updatedFilters.push({
+                        id: "product_product_name",
+                        value: value,
+                      });
+                    }
+                    return updatedFilters;
+                  });
+                }}
             />
+
+            {/*<input*/}
+            {/*    type="text"*/}
+            {/*    placeholder="Search by product name"*/}
+            {/*    className="border rounded p-2"*/}
+            {/*    onChange={(e) => {*/}
+            {/*      table.setFilter("product.product_name", e.target.value);*/}
+            {/*    }}*/}
+            {/*/>*/}
           </div>
-          <div className="w-[280px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center">
-            <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Sort by :</span>
+          <div className="w-[180px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
+            <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Status :</span>
             <select
               name="select"
               className="flex-1 bg-[#F9FBFF] h-full text-[14px] font-outfit"
               onChange={(e) => {
-                if (e.target.value === "active") table.setSorting(() => [{ desc: true, id: "status" }]);
-                if (e.target.value === "closed") table.setSorting(() => [{ desc: false, id: "status" }]);
-                if (e.target.value === "") table.resetSorting();
+                const value = e.target.value;
+                table.setColumnFilters((filters) => {
+                  if (!Array.isArray(filters)) {
+                    filters = [];
+                  }
+                  const updatedFilters = filters.filter((f) => f.id !== "status");
+                  if (value !== "") {
+                    updatedFilters.push({
+                      id: "status",
+                      value: value,
+                    });
+                  }
+                  return updatedFilters;
+                });
+
               }}
             >
               <option value="">All</option>
               <option value="active">Active</option>
               <option value="closed">Closed</option>
+            </select>
+          </div>
+
+          <div className="w-[200px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
+            <span className="placeholder-[#B5B7C0] text-[14px] font-outfit mr-2">Sort by :</span>
+            <select
+                name="select1 "
+                className="flex-1 bg-[#F9FBFF] h-full text-[14px] font-outfit"
+                onChange={(e) => {
+                  if (e.target.value === "new_first") table.setSorting(() => [{ desc: true, id: "timestamp" }]);
+                  if (e.target.value === "old_first") table.setSorting(() => [{ desc: false, id: "timestamp" }]);
+                  if (e.target.value === "") table.resetSorting();
+                }}
+            >
+              <option value="">-</option>
+              <option value="new_first">Newest first</option>
+              <option value="old_first">Oldest first</option>
             </select>
           </div>
         </div>
@@ -192,14 +275,14 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
           <tbody className="w-full pt-5">
             {table.getRowModel().rows.map((row) => {
               return (
-                <tr key={row.id} className="w-full ">
+                <tr key={row.id} className="w-full">
                   {row.getVisibleCells().map((cell, index) => {
                     const stage = cell.row.original.stage.stage;
                     const status = cell.row.original.stage.status;
                     const order_id = cell.row.original.order_id;
                     const mainStatus = cell.row.original.status;
                     return (
-                      <td key={cell.id} className="py-[10px] border-t border-[#EEEEEE]">
+                      <td key={cell.id} className="py-[10px] border-t border-[#EEEEEE]" onClick={() => index < 7 ? openOrderModal(row.original) : null}>
                         {index === 7 ? (
                           <div className="w-full  flex items-center justify-center pb-[10px]">
                             <div className="flex items-center">
@@ -257,7 +340,7 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
                                     <div className="w-[20px] h-[20px] rounded-full flex justify-center items-center bg-[#DA1E28]">
                                       <IoCloseOutline size={14} color="white" />
                                     </div>
-                                    <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">Error</p>
+                                    <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">{role === 'distributor' ? 'Error' : 'Cancel'}</p>
                                   </div>
                                 </div>
                               </div>
@@ -335,14 +418,14 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
                                     <div
                                       onClick={() => {
                                         if (role === "distributor") updateStatusFn(order_id, "error");
-                                        if (role === "store") updateStatusStoreFn(order_id);
+                                        if (role === "store") handleCancelClick(order_id);
                                       }}
                                       className="flex gap-1 items-center py-[3px] cursor-pointer hover:bg-red-200"
                                     >
                                       <div className="w-[20px] h-[20px] rounded-full flex justify-center items-center bg-[#DA1E28]">
                                         <IoCloseOutline size={14} color="white" />
                                       </div>
-                                      <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">Error</p>
+                                      <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">{role === 'distributor' ? 'Error' : 'Cancel'}</p>
                                     </div>
                                   </div>
                                 )}
@@ -430,7 +513,7 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
                                       <div className="w-[20px] h-[20px] rounded-full flex justify-center items-center bg-[#DA1E28]">
                                         <IoCloseOutline size={14} color="white" />
                                       </div>
-                                      <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">Error</p>
+                                      <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">{role === 'distributor' ? 'Error' : 'Cancel'}</p>
                                     </div>
                                   </div>
                                 )}
@@ -518,7 +601,7 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
                                       <div className="w-[20px] h-[20px] rounded-full flex justify-center items-center bg-[#DA1E28]">
                                         <IoCloseOutline size={14} color="white" />
                                       </div>
-                                      <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">Error</p>
+                                      <p className="font-outfit font-medium text-[#6F6F6F] text-[12px]">{role === 'distributor' ? 'Error' : 'Cancel'}</p>
                                     </div>
                                   </div>
                                 )}
@@ -629,6 +712,32 @@ export default function OrdersTable({ data, columns }: { data: Order[]; columns:
           </button>
         </div>
       )}
+
+      <OrderModal order={selectedOrder} isOpen={!!selectedOrder} onClose={closeOrderModal} />
+
+      {isModalVisible && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+            <div className="bg-white p-7 rounded shadow-lg">
+              <h2 className="text-lg font-bold text-center mb-4">Confirm Cancellation</h2>
+              <p>Are you sure you want to cancel this order?</p>
+              <div className="flex justify-center gap-2 mt-6 items-center">
+                <button
+                    onClick={handleModalClose}
+                    className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Close
+                </button>
+                <button
+                    onClick={handleConfirmCancel}
+                    className="px-4 py-2 bg-red-600 text-white rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+      )}
+
     </div>
   );
 }
