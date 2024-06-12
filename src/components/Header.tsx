@@ -25,14 +25,14 @@ export default function Header() {
 
     return (
         <header className="h-[90px] flex flex-col md:flex-row font-montserrat items-center border-b border-[#6A7188] relative z-20">
-            <Link href={"/"} className="text-4xl font-bold text-[#438DB8] mt-4 md:mt-0 md:absolute md:ml-32">
+            <Link href={"/login"} className="text-4xl font-bold text-[#438DB8] mt-4 md:mt-0 md:absolute md:ml-32">
                 Duken
             </Link>
 
             <div className="flex-auto flex flex-col md:flex-row items-center md:justify-center gap-6 text-lg font-semibold text-[#666666] mt-4 md:mt-0"
                  style={pathname === '/lending' ? { display: "none" } : null}>
                 <div className="flex flex-row justify-center gap-6">
-                    <Link href={"/"}>Home</Link>
+                    <Link href={"/login"}>Home</Link>
                     <Link href={isUser ? `/${role}/about` : '/about'}>About us</Link>
                     <Link href={isUser ? `/${role}/contact` : '/contact'}>Contact us</Link>
                 </div>

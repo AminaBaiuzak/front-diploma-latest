@@ -66,13 +66,41 @@ export default function StockTable({ data, columns }: { data: IProduct[]; column
         <div className="flex justify-between w-full mb-[15px]">
           <p className=" font-montserrat font-semibold text-[22px] text-main">{role === 'distributor' ? 'My Items' : 'Products' }</p>
           {role === "distributor" && (
-              <div
-                  className="rounded-[10px] bg-[#00AC4F99] px-[30px] py-2 flex items-center justify-center gap-2 cursor-pointer"
-                  onClick={() => router.push("/distributor/my-stock/new-item")}
-              >
-                <span className="font-montserrat font-semibold text-white">Add Item</span>
-                <AiFillPlusSquare size={20} color="white" />
-              </div>
+              <>
+                <div className="w-[300px] h-[38px] bg-[#F9FBFF] rounded-[10px] px-[20px] flex items-center border">
+                  <IoSearch size={24} color="#7E7E7E" />
+                  <input
+                      type="text"
+                      placeholder="Search"
+                      className="placeholder-[#B5B7C0] bg-transparent text-[14px] font-outfit w-full outline-none ml-[8px]"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        table.setColumnFilters((filters) => {
+                          if (!Array.isArray(filters)) {
+                            filters = [];
+                          }
+                          const updatedFilters = filters.filter((f) => f.id !== "product_name");
+                          if (value !== "") {
+                            updatedFilters.push({
+                              id: "product_name",
+                              value: value,
+                            });
+                          }
+                          return updatedFilters;
+                        });
+                      }}
+                  />
+
+                </div>
+                <div
+                    className="rounded-[10px] bg-[#00AC4F99] px-[30px] py-2 flex items-center justify-center gap-2 cursor-pointer"
+                    onClick={() => router.push("/distributor/my-stock/new-item")}
+                >
+                  <span className="font-montserrat font-semibold text-white">Add Item</span>
+                  <AiFillPlusSquare size={20} color="white" />
+                </div>
+              </>
+
           )}
           {role === "store" && (
               <div className="flex gap-[8px]">
