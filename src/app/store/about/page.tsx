@@ -3,7 +3,7 @@
 import {useEffect, useState} from "react";
 import About from "@/components/About";
 
-export default function AboutPage() {
+export default function AboutPageStore() {
 
     const [isUser, setIsUser] = useState(false)
 

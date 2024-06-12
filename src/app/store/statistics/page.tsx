@@ -71,7 +71,7 @@ export default function StatisticsPage() {
   if (isError) return null;
 
   return (
-    <div className="pl-[103px] pr-[37px] pt-[30px] pb-[80px] bg-[#36719314] flex-1 flex flex-col gap-[24px]">
+    <div className="pl-[90px] md:pl-[103px] md:pr-[37px] pt-[10px] md:pt-[30px] pb-[80px] bg-[#36719314] flex-1 flex flex-col gap-[24px]">
       <div className="h-[151px] w-[100%] bg-white rounded-[30px] flex">
         <div className="w-[50%] h-full flex gap-3 justify-center items-center">
           <div className="w-[84px] h-[84px] rounded-full bg-[#EFFFF6] flex justify-center items-center">

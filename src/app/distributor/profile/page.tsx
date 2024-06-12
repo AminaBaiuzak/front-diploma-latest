@@ -60,17 +60,19 @@ export default function ProfilePage() {
   if (profileDataError || reviewsError) return null;
 
   return (
-      <div className="pl-[110px] pr-[76px] pt-[30px] pb-[80px] bg-[#36719314] w-full flex gap-[7px]">
-        <div className="bg-white w-[50%] h-full rounded-lg pl-[30px] pr-[50px] border border-[#EBEBEE] shadow-md pt-[13px]">
-          <div className=" rounded-full w-[104px] h-[104px] flex justify-center items-center overflow-hidden">
-            <img src={profileData.distributor.img_url ? profileData.distributor.img_url : "/profile_avatar.png"} alt="" className="w-[100px] h-[100px] object-cover" />
-          </div>
+      <div className="pl-[90px] md:pl-[110px] pr-[12px] md:pr-[60px] pt-[10px] md:pt-[20px] pb-[9px] md:pb-[30px] pb-[80px] bg-[#36719314] w-full md:flex md:gap-[7px]">
+        <div className="bg-white md:w-[50%] md:h-full rounded-lg pl-[30px] pr-[50px] border border-[#EBEBEE] shadow-md pt-[13px]">
 
-          <div className="bg-[#367193] w-[104px] rounded-xl text-center px-[8px] flex items-center py-[3px] mt-[-10px] relative mb-[15px]">
-            <span className=" uppercase font-montserrat text-xs font-bold text-white ">distributor</span>
-          </div>
+            <div className="rounded-full md:w-[104px] md:h-[104px] flex justify-center items-center overflow-hidden ">
+              <img src={profileData.distributor.img_url ? profileData.distributor.img_url : "/profile_avatar.png"} alt="" className="w-[100px] h-[100px] object-cover" />
+            </div>
 
-          <div className=" border border-[#00000026] rounded-[4px] shadow-sm pr-[8px] mt-[9px] font-outfit font-medium text-sm relative">
+            <div className="bg-[#367193] md:w-[104px] rounded-xl justify-center text-center px-[8px] flex items-center py-[3px] mt-[-10px] relative mb-[15px]">
+              <span className=" uppercase font-montserrat text-xs font-bold text-white">distributor</span>
+            </div>
+
+
+          <div className=" border border-[#00000026] rounded-[4px] shadow-sm md:pr-[8px] md:mt-[9px] font-outfit font-medium text-sm relative">
             <div className="py-[10px] flex flex-col justify-center pl-[8px] my-[10px]">
               <p className="text-[#1F1F1FB2]">Your company name</p>
               <p className="text-main">{profileData.distributor.company_name}</p>
@@ -95,13 +97,13 @@ export default function ProfilePage() {
               <p className="text-[#1F1F1FB2]">Phone</p>
               <p className="text-main">{profileData.distributor.phone_number}</p>
             </div>
-            <button className="text-[#1F1F1FCC] bg-[#F0EFFA] rounded-[50px] px-[20px] py-[3px] absolute top-[10px] right-[8px]" onClick={() => router.push("/distributor/profile/edit")}>
+            <button className="text-[#1F1F1FCC] bg-[#F0EFFA] rounded-[50px] px-[5px] md:px-[20px] py-[0] md:py-[3px] absolute top-[5px] right-[2px] md:top-[10px] md:right-[8px]" onClick={() => router.push("/distributor/profile/edit")}>
               Edit
             </button>
           </div>
         </div>
 
-        <div className="w-[50%] rounded-lg overflow-hidden shadow-md py-[17px] px-[12px] bg-white border border-[#EBEBEE]">
+        <div className="md:w-[50%] rounded-lg overflow-hidden shadow-md py-[17px] px-[12px] bg-white border border-[#EBEBEE]">
           <div className="rounded-[7px] py-[8px] px-[9px] font-outfit">
             <p className=" font-medium text-[14px]">Professional Details</p>
             <p className="text-[#49454FCC] text-[14px]">These are the professional details shown to users in the app.</p>

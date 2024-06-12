@@ -24,6 +24,10 @@ export default function OrdersPage() {
     },
   });
 
+    const sortDateFn: SortingFn<Order> = (rowA, rowB, _columnId) => {
+        return new Date(rowA.original.timestamp).getTime() - new Date(rowB.original.timestamp).getTime();
+    };
+
   useEffect(() => {
     if (isError) {
       localStorage.removeItem("duken");
@@ -82,6 +86,11 @@ export default function OrdersPage() {
         header: () => <span>Status</span>,
         sortingFn: sortStatusFn,
       },
+        {
+            accessorKey: "timestamp",
+            header: () => <span>Date</span>,
+            sortingFn: sortDateFn,
+        },
     ],
     []
   );

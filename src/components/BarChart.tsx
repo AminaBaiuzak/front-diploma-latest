@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getStatistics } from "@/services/orders";
 import Loader from "react-spinners/PuffLoader";
 import {usePathname} from "next/navigation";
+import {getStoreStatistics} from "@/services/orders_store";
 
 ChartJS.register(
     CategoryScale,
@@ -88,22 +89,26 @@ const BarChart = ({ data, role }) => {
 };
 
 const Dashboard = () => {
+
+    const [chartData, setChartData] = useState(null);
+    const pathname = usePathname();
+    const role = pathname.startsWith("/distributor") ? "distributor" : "store";
+
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['statistics_store'],
+        queryKey: ['statistics_chart'],
         queryFn: () => {
             const token = localStorage.getItem('duken');
             if (!token) {
                 throw new Error('No token found');
             }
-            return getStatistics(JSON.parse(token).token);
+            if (role === "distributor"){
+                return getStatistics(JSON.parse(token).token);
+            } else {
+                return getStoreStatistics(JSON.parse(token).token)
+            }
         },
     });
 
-
-
-    const [chartData, setChartData] = useState(null);
-    const pathname = usePathname();
-    const role = pathname.startsWith("/distributor") ? "distributor" : "store";
 
     useEffect(() => {
         if (data !== undefined) {

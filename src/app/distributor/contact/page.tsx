@@ -1,9 +1,9 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import About from "@/components/About";
+import Contact from "@/components/Contact";
 
-export default function AboutPage() {
+export default function ContactPageDist() {
 
     const [isUser, setIsUser] = useState(false)
 
@@ -16,6 +16,6 @@ export default function AboutPage() {
     }, []);
 
     return (
-        <About isUser={isUser}/>
+        <Contact isUser={isUser}/>
     )
 }

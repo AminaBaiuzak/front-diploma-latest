@@ -80,7 +80,7 @@ export default function Login() {
 
   return (
     <div className="flex-1 flex">
-      <div className="w-[45%] h-[100%] bg-[url('/auth_back.png')] bg-cover bg-center pl-11 pr-14 flex flex-col gap-[15px] pt-[10%] pb-[15%] justify-center">
+      <div className="hidden md:flex w-[45%] h-[100%] bg-[url('/auth_back.png')] bg-cover bg-center pl-11 pr-14 flex-col gap-[15px] pt-[10%] pb-[15%] justify-center">
         <p className="font-outfit font-semibold text-[22px] text-white">
           Our platform is designed to be intuitive and easy to use, ensuring a smooth experience for all users.
         </p>
@@ -93,13 +93,10 @@ export default function Login() {
       </div>
       <div className="h-[100%] flex-1 flex-col gap-[15px] pt-[10%] pb-[15%] flex items-center  shadow-md">
         <div>
+
+
           <p className="text-main font-outfit text-[24px] uppercase w-fit">Welcome to Duken</p>
-          <p className="text-main font-outfit w-fit">
-            Don't have an account yet?{" "}
-            <a href="/registration" className="text-[#367193] underline">
-              Sign up
-            </a>
-          </p>
+
         </div>
         {login.isPending ? (
           <div>is Loading</div>
@@ -128,6 +125,14 @@ export default function Login() {
             </button>
           </>
         )}
+
+        <p className="text-main font-outfit w-fit text-[20x]">
+          Don't have an account yet?{" "}
+          <a href="/registration" className="text-[#367193] underline text-[20px]">
+            Sign up
+          </a>
+        </p>
+
       </div>
     </div>
   );

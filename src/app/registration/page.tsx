@@ -4,13 +4,16 @@ import FormInput from "@/components/FormInput";
 import { RegistrationData } from "@/types/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import { registerUser } from "@/services/auth";
 import { toast } from "react-toastify";
 
 export default function Registration() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialRole = searchParams.get("role");
+
   const [name, setName] = useState("");
   const [bin, setBin] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -18,8 +21,10 @@ export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState(initialRole);
   const [city, setCity] = useState("");
+
+  console.log("Helooooooooooooooooooo", initialRole)
 
   const cities = useQuery({
     queryKey: ["cities"],
@@ -111,7 +116,7 @@ export default function Registration() {
 
   return (
     <div className="flex-1 flex">
-      <div className="w-[45%] h-[100%] bg-[url('/auth_back.png')] bg-cover bg-center pl-11 pr-14 flex flex-col gap-[15px] pt-[10%] pb-[15%] justify-center">
+      <div className="hidden md:flex w-[45%] h-[100%] bg-[url('/auth_back.png')] bg-cover bg-center pl-11 pr-14 flex flex-col gap-[15px] pt-[10%] pb-[15%] justify-center">
         <p className="font-outfit font-semibold text-[22px] text-white">Register today and start enjoying the benefits</p>
         <div className="border-b-[3px] border-[#367193]"></div>
         <p className="font-outfit font-semibold text-[22px] text-white">
@@ -123,9 +128,9 @@ export default function Registration() {
       <div className="h-[100%] flex-1 flex-col gap-[15px] pt-[60px] pb-[15%] flex items-center  shadow-md">
         <div>
           <p className="text-main font-outfit text-[24px] uppercase w-fit">Welcome to Duken</p>
-          <p className="text-main font-outfit w-fit">
+          <p className="text-main font-outfit w-fit text-[16x]">
             Already have an account?{" "}
-            <a href="/login" className="text-[#367193] underline">
+            <a href="/login" className="text-[#367193] underline text-[20px]">
               Log in
             </a>
           </p>
